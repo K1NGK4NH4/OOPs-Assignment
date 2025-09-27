@@ -37,25 +37,9 @@ void Student::ViewCredentials() const {
 }
 
 // Join a club
-bool Student::requestJoinClub(Club* c) {
+bool Student::accessJoinClub(Club* c) {
     // Access admin from club
-    Student* admin = c->getAdmin();
-    if (!admin) {
-        cout << "This club has no admin. Cannot send request." << endl;
-        return false;
-    }
-
-    // Send request to club admin
-    bool approved = admin->approveJoinRequest(c, this);
-
-    if (approved) {
-        Clubs.push_back(c);   // Only add if approved
-        cout << "Student joined club: " << c->getName() << endl;
-        return true;
-    } else {
-        cout << "Join request denied for club: " << c->getName() << endl;
-        return false;
-    }
+    
 }
 
 
@@ -96,4 +80,42 @@ int Student::getGraduationYear() const {
 }
 float Student::getCGPA() const {
      return cgpa; 
+}
+
+
+
+
+
+
+
+
+
+Admin::Admin(string n, int e, string m, int gradYear, float g, Club* c, string join)
+        : Student(n, e, m, gradYear, g), club(c), joiningDate(join) {}
+
+// Add member
+bool Admin::addMember(Student* s) {
+
+    club->addMember(s);
+    cout << s->getName() << " added to club " << club->getName() << endl;
+}
+
+// Remove member
+void Admin::removeMember(int studentId) {
+   club->removeMember(studentId);
+}
+
+// Add assignment
+void Admin::addAssignment( Assignment* a) {
+    club->addAssignment(a);
+}
+
+// Remove assignment
+void Admin::removeAssignment(int assignmentId) {
+    club->removeAssignment(assignmentId);
+}
+
+// Set a new admin
+void Admin::setNewAdmin(Student* newAdmin) {
+    club->setAdmin(newAdmin);
 }
