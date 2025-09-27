@@ -32,8 +32,8 @@ public:
     bool leaveClub(Club* c);
     Vector<Club*> ViewClubs() const;
 
-    void submitAssignment(Assignment* a, bool late);
-    void getAssignment(Club* c) const;
+    void submitAssignment(Club* c,Submission* s);
+    Vector<Assignment*> getAssignment(Club* c) const;
 
     // Getters
     string getName() const;
@@ -48,11 +48,11 @@ class Admin : public Student {
     Club* club;
     string joiningDate;
 public:
-    Admin(string n, int e, string m, int gradYear, float g, Club* c, string join)
+    Admin(string n, int e, string m, int gradYear, float g, Club* c, string join);
 
 
     // Admin functionalities
-    bool addMember( Student* s);
+    void addMember(Student* s);
     void removeMember(int studentId);
 
     void addAssignment(Assignment* a);

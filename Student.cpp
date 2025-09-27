@@ -39,7 +39,10 @@ void Student::ViewCredentials() const {
 // Join a club
 bool Student::accessJoinClub(Club* c) {
     // Access admin from club
-    
+    cout<<"Do you want to join Club??"<<c->getName()<<"y/n?"<<endl;
+    char choice;
+    cin>>choice;
+    return choice == 'y' ? true:false;
 }
 
 
@@ -61,17 +64,21 @@ Vector<Club*> Student::ViewClubs() const {
 }
 
 // Submit assignment
-void Student::submitAssignment(Assignment* a, bool late) {
-    Submission* s = new Submission(a, late);
-    Assignment_Submission.push_back(s);
+void Student::submitAssignment(Club* c,Submission* s) {
+   Vector<Assignment*> hw = getAssignment(c);
+   s->getAssignment();
 }
 
 // Get assignment (just prints club name for now)
-// void Student::getAssignment(Club* c) const {
-//     cout << "Assignments for club: " << c->name << endl;
-// }
+Vector<Assignment*> Student::getAssignment(Club* c) const {
+    cout << "Assignments for club: " << c->getName()<< endl;
+    return c->getAssignments();
+}
 
 // Getters
+string Student::getName() const {
+     return name; 
+}
 int Student::getEnrollment() const {
      return Enrollment; 
 }
@@ -94,10 +101,13 @@ Admin::Admin(string n, int e, string m, int gradYear, float g, Club* c, string j
         : Student(n, e, m, gradYear, g), club(c), joiningDate(join) {}
 
 // Add member
-bool Admin::addMember(Student* s) {
-
-    club->addMember(s);
-    cout << s->getName() << " added to club " << club->getName() << endl;
+void Admin::addMember(Student* s){
+    if(accessJoinClub(club)){
+        club->addMember(s);
+        cout << s->getName() << " added to club " << club->getName() << endl;
+    }else{
+        cout << s->getName() << " rejected to join club " << club->getName() << endl;
+    }
 }
 
 // Remove member
