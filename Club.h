@@ -17,11 +17,11 @@ private:
     string mail;
     Vector<Assignment*> assignments;
     Vector<Student*> members;
-    Student* admin;
+    Admin* admin;
 
 public:
     // Constructor & Destructor
-    Club(int id = 0, const string& n = "", const string& m = "", Student* a = nullptr);
+    Club(int id = 0, const string& n = "", const string& m = "", Admin* a = nullptr);
     ~Club();
 
     // Getters

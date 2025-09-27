@@ -1,7 +1,7 @@
 #include "Club.h"
 
 // Constructor
-Club::Club(int id, const string& n, const string& m, Student* a)
+Club::Club(int id, const string& n, const string& m, Admin* a)
     : clubId(id), name(n), mail(m), admin(a) {}
 
 // Destructor
@@ -30,7 +30,7 @@ Vector<Student*> Club::getMembers() const {
     return members;
 }
 
-Student* Club::getAdmin() const {
+Admin* Club::getAdmin() const {
     return admin;
 }
 

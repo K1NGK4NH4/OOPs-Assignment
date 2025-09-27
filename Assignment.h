@@ -5,6 +5,7 @@
 #include <string>
 #include "Vector.h"        // Ensure Vector.h is in the same directory
 #include "Submissions.h"
+#include "Student.h"
 using namespace std;
 
 class Assignment {
@@ -12,16 +13,16 @@ private:
     int AssignmentId;
     string title;
     string description;
-    Vector<string> Givenby;               // Teachers who gave this assignment
-    Vector<string> Iterations;
-    Vector<int> StudentIds;
+    Admin* Givenby;               
+    Vector<string> Iterations; 
+    Vector<Student*> Students;
     bool completed;
-    int issueingClubId;
+    Club* issueingClub;
     Vector<Submission*> Assignment_Submission;
 
 public:
     // Constructor
-    Assignment(string t, string d, Vector<string> g, string i, int id);
+    Assignment(string t, string d, Admin* g, string i, Club* c);
 
     // Copy constructor (shallow copy of submissions)
     Assignment(const Assignment& other);
@@ -38,10 +39,10 @@ public:
     int getAssignmentId() const;
     string getTitle() const;
     string getDescription() const;
-    int getIssuingClubId() const;
+    int getIssueingClub() const;
     Vector<string> getGivenBy() const;
     Vector<string> getIterations() const;
-    Vector<int> getStudentIds() const;
+    Vector<int> getStudents() const;
     Vector<Submission*> getSubmissions() const;
 
     // Display details
