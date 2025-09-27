@@ -4,8 +4,11 @@
 #include <string>
 #include <iostream>
 #include "Vector.h"
-#include "Student.h"
-#include "Assignment.h"
+
+// Forward declarations
+class Student;
+class Assignment;
+
 using namespace std;
 
 class Submission {
@@ -19,8 +22,7 @@ private:
 
 public:
     // Constructor
-    Submission(Student* s, Assignment* a, bool isLate)
-        : student(s), assignment(a), late(isLate), review(""), score(0) { }
+    Submission(Student* s, Assignment* a, bool isLate);
     
     // Getters
     Student* getStudent() const;

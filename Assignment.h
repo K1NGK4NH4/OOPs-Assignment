@@ -3,9 +3,14 @@
 
 #include <iostream>
 #include <string>
-#include "Vector.h"        // Ensure Vector.h is in the same directory
-#include "Submissions.h"
-#include "Student.h"
+#include "Vector.h"
+
+// Forward declarations
+class Student;
+class Admin;
+class Club;
+class Submission;
+
 using namespace std;
 
 class Assignment {

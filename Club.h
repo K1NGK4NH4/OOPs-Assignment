@@ -3,10 +3,12 @@
 
 #include <string>
 #include <iostream>
-#include "Assignment.h"
 #include "Vector.h"
-#include "Submissions.h"
-#include "Student.h"
+
+// Forward declarations
+class Student;
+class Admin;
+class Assignment;
 
 using namespace std;
 

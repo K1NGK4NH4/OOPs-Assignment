@@ -4,9 +4,13 @@
 #include <string>
 #include <iostream>
 #include "Vector.h"
-#include "Club.h"
-#include "Submissions.h"
-#include "Assignment.h"
+
+// Forward declarations
+class Club;
+class Submission;
+class Assignment;
+class Admin;
+
 using namespace std;
 
 class Student {

@@ -108,7 +108,6 @@ public:
 
     const T& operator[](int index) const { return arr[index]; }
     T& operator[](int index) { return arr[index]; }
-    T* operator[](int index) const { return arr[index]; }
 };
 
 #endif

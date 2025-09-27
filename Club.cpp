@@ -1,4 +1,6 @@
 #include "Club.h"
+#include "Student.h"
+#include "Assignment.h"
 
 // Constructor
 Club::Club(int id, const string& n, const string& m, Admin* a)

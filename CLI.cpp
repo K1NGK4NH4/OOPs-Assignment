@@ -369,11 +369,12 @@ int main() {
             case 1:
                 showStudentInfo(currentUser);
                 break;
-            case 2:
+            case 2: {
                 Admin* admin = new Admin(currentUser->getName(), currentUser->getEnrollment(), currentUser->getMail(), currentUser->getGraduationYear(), currentUser->getCGPA(), nullptr, "");
                 clubs.push_back(new Club(0, "", "", admin));
                 createClub(admin);
                 break;
+            }
             case 3:
                 clubActivities(currentUser);
                 break;

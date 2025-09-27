@@ -1,4 +1,7 @@
 #include "Student.h"
+#include "Club.h"
+#include "Submissions.h"
+#include "Assignment.h"
 
 // Default constructor
 Student::Student() 

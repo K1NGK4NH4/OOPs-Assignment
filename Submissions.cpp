@@ -1,4 +1,6 @@
 #include "Submissions.h"
+#include "Student.h"
+#include "Assignment.h"
 
 Submission::Submission(Student* s, Assignment* a, bool isLate)
     : student(s), assignment(a), late(isLate), review(""), score(0) { }
@@ -12,9 +14,6 @@ Assignment* Submission::getAssignment() const {
     return assignment;
 }
 
-bool Submission::isLate() const {
-    return late;
-}
 
 Vector<string> Submission::getSubmittedFiles() const {
     return submittedFiles;

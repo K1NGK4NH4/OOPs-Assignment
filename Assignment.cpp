@@ -1,4 +1,7 @@
 #include "Assignment.h"
+#include "Student.h"
+#include "Club.h"
+#include "Submissions.h"
 
 // Constructor
 Assignment::Assignment(string t, string d, Admin* g, string i, Club* c)
