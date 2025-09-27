@@ -1,28 +1,19 @@
 #include "Submissions.h"
 
-Submission::Submission(int id, string name, int aid, string date)
-    : studentID(id),
-      studentName(name),
-      assignmentID(aid),
-      submissionDate(date),
-      review(""),
-      score(0) { }
+Submission::Submission(Student* s, Assignment* a, bool isLate)
+    : student(s), assignment(a), late(isLate), review(""), score(0) { }
 
 // Getters
-int Submission::getStudentID() const {
-    return studentID;
+Student* Submission::getStudent() const {
+    return student;
 }
 
-string Submission::getStudentName() const {
-    return studentName;
+Assignment* Submission::getAssignment() const {
+    return assignment;
 }
 
-int Submission::getAssignmentID() const {
-    return assignmentID;
-}
-
-string Submission::getSubmissionDate() const {
-    return submissionDate;
+bool Submission::isLate() const {
+    return late;
 }
 
 Vector<string> Submission::getSubmittedFiles() const {
@@ -52,10 +43,10 @@ void Submission::addFile(const string& file) {
 
 // Display submission info
 void Submission::display() const {
-    cout << "Student ID: " << studentID << "\n";
-    cout << "Student Name: " << studentName << "\n";    
-    cout << "Assignment ID: " << assignmentID << "\n";
-    cout << "Submission Date: " << submissionDate << "\n";
+    cout << "Student ID: " << student->getEnrollment() << "\n";
+    cout << "Student Name: " << student->getName() << "\n";    
+    cout << "Assignment ID: " << assignment->getAssignmentId() << "\n";
+    cout << "isLate: " << isLate() << "\n";
     cout << "Submitted Files: ";
     if (submittedFiles.empty()) {
         cout << "None";

@@ -1,11 +1,11 @@
 #include "Assignment.h"
 
 // Constructor
-Assignment::Assignment(string t, string d, Vector<string> g, string i, int id)
+Assignment::Assignment(string t, string d, Admin* g, string i, Club* c)
     : title(t),
       description(d),
       Givenby(g),
-      issueingClubId(id),
+      issueingClub(c),
       completed(false)
 {
     static int nextId = 1;
