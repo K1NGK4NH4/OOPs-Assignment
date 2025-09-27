@@ -126,6 +126,6 @@ void Admin::removeAssignment(int assignmentId) {
 }
 
 // Set a new admin
-void Admin::setNewAdmin(Student* newAdmin) {
+void Admin::setNewAdmin(Admin* newAdmin) {
     club->setAdmin(newAdmin);
 }

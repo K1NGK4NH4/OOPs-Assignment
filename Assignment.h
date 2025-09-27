@@ -39,19 +39,18 @@ public:
     int getAssignmentId() const;
     string getTitle() const;
     string getDescription() const;
-    int getIssueingClub() const;
-    Vector<string> getGivenBy() const;
+    Club* getIssueingClub() const;
+    Admin* getGivenBy() const;
     Vector<string> getIterations() const;
-    Vector<int> getStudents() const;
+    Vector<Student*> getStudents() const;
     Vector<Submission*> getSubmissions() const;
 
     // Display details
     void details() const;
 
     // Modifiers
-    void addTeacher(const string& teacher);
     void addIteration(const string& iteration);
-    void addStudent(int studentId);
+    void addStudent(Student* student);
     void addSubmission(Submission* submission);
 };
 
