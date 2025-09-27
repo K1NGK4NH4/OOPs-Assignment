@@ -18,6 +18,7 @@ protected:
     float cgpa;
     Vector<Club*> Clubs;
     Vector<Submission*> Assignment_Submission;
+    Vector<Club*> clubRequest;
 
 public:
     // Constructors
@@ -25,14 +26,12 @@ public:
     Student(string n,int Enrollment, string m, int gradYear, float g);
 
     // Methods
-    void AddCredentials();
-    void ViewCredentials() const;
 
-    bool accessJoinClub(Club* c);
+    void accessJoinClub(Club* c);
     bool leaveClub(Club* c);
     Vector<Club*> ViewClubs() const;
 
-    void submitAssignment(Club* c,Submission* s);
+    void submitAssignment(Submission* s);
     Vector<Assignment*> getAssignment(Club* c) const;
 
     // Getters

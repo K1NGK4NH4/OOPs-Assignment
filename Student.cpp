@@ -8,53 +8,15 @@ Student::Student()
 Student::Student(string n,int e, string m, int gradYear, float g)
     : name(n),Enrollment(e),mail(m),GraduationYear(gradYear),cgpa(g) {}
 
-// Add credentials manually
-void Student::AddCredentials() {
-    cout << "Enter your name: ";
-    cin.ignore();
-    getline(cin, name);
-
-    cout << "Enter your mail: ";
-    getline(cin, mail);
-
-    cout << "Enter graduation year: ";
-    cin >> GraduationYear;
-
-    cout << "Enter CGPA: ";
-    cin >> cgpa;
-
-    cout << "Enter enrollment ID: ";
-    cin >> Enrollment;
-}
-
-// View credentials
-void Student::ViewCredentials() const {
-    cout << "Name: " << name << endl;
-    cout << "Mail: " << mail << endl;
-    cout << "Graduation Year: " << GraduationYear << endl;
-    cout << "CGPA: " << cgpa << endl;
-    cout << "Enrollment ID: " << Enrollment << endl;
-}
-
 // Join a club
-bool Student::accessJoinClub(Club* c) {
+void Student::accessJoinClub(Club* c) {
     // Access admin from club
-    cout<<"Do you want to join Club??"<<c->getName()<<"y/n?"<<endl;
-    char choice;
-    cin>>choice;
-    return choice == 'y' ? true:false;
+    clubRequest.push_back(c);
 }
-
-
 
 // Leave a club
 bool Student::leaveClub(Club* c) {
-    Vector<Club*> temp;
-    for (int i = 0; i <= Clubs.size() - 1; i++) {
-        if (Clubs[i] != c)
-            temp.push_back(Clubs[i]);
-    }
-    Clubs = temp;
+    Clubs.pop(c);
     return true;
 }
 
@@ -64,9 +26,8 @@ Vector<Club*> Student::ViewClubs() const {
 }
 
 // Submit assignment
-void Student::submitAssignment(Club* c,Submission* s) {
-   Vector<Assignment*> hw = getAssignment(c);
-   s->getAssignment();
+void Student::submitAssignment(Submission* s) {
+   Assignment* hw =  s->getAssignment();
 }
 
 // Get assignment (just prints club name for now)
@@ -92,22 +53,12 @@ float Student::getCGPA() const {
 
 
 
-
-
-
-
-
 Admin::Admin(string n, int e, string m, int gradYear, float g, Club* c, string join)
         : Student(n, e, m, gradYear, g), club(c), joiningDate(join) {}
 
 // Add member
 void Admin::addMember(Student* s){
-    if(accessJoinClub(club)){
-        club->addMember(s);
-        cout << s->getName() << " added to club " << club->getName() << endl;
-    }else{
-        cout << s->getName() << " rejected to join club " << club->getName() << endl;
-    }
+       s->accessJoinClub(club);
 }
 
 // Remove member
