@@ -113,7 +113,7 @@ void clubActivities(Student* user) {
 }
 
 // Create assignment function
-void createAssignment(Student* user) {
+void createAssignment(Admin* user) {
     string title, description, iteration;
     int clubId;
     
@@ -124,10 +124,20 @@ void createAssignment(Student* user) {
     cout << "Enter iteration: "; getline(cin, iteration);
     cout << "Enter issuing club ID: "; cin >> clubId;
     
-    Vector<string> givenBy;
-    givenBy.push_back(user->getName());
+    // Check if the club exists
+    bool clubExists = false;
+    for (int i = 0; i < clubs.size(); ++i) {
+        if (clubs[i]->getClubId() == clubId) {
+            clubExists = true;
+            break;
+        }
+    }
+    if (!clubExists) {
+        cout << "Club with ID " << clubId << " does not exist!\n";
+        return;
+    }
     
-    Assignment* a = new Assignment(title, description, givenBy, iteration, clubId);
+    Assignment* a = new Assignment(title, description, user, iteration, clubs[clubId - 1]);
     assignments.push_back(a);
     
     // Add assignment to the club if found
@@ -161,7 +171,6 @@ void modifyAssignment(Student* user) {
     }
     
     cout << "\nWhat would you like to modify?\n";
-    cout << "1. Add Teacher\n";
     cout << "2. Add Iteration\n";
     cout << "3. Add Student\n";
     cout << "4. Mark as Completed\n";
@@ -170,13 +179,6 @@ void modifyAssignment(Student* user) {
     cin.ignore();
     
     switch (choice) {
-        case 1: {
-            string teacher;
-            cout << "Enter teacher name: "; getline(cin, teacher);
-            targetAssignment->addTeacher(teacher);
-            cout << "Teacher added successfully!\n";
-            break;
-        }
         case 2: {
             string iteration;
             cout << "Enter new iteration: "; getline(cin, iteration);
@@ -187,7 +189,19 @@ void modifyAssignment(Student* user) {
         case 3: {
             int studentId;
             cout << "Enter student ID: "; cin >> studentId;
-            targetAssignment->addStudent(studentId);
+            Student* targetStudent = nullptr;
+            for (int i = 0; i < students.size(); ++i) {
+                if (students[i]->getEnrollment() == studentId) {
+                    targetStudent = students[i];
+                    break;
+                }
+            }
+            if (!targetStudent) {
+                cout << "Student not found!\n";
+                return;
+            }
+
+            targetAssignment->addStudent(targetStudent);
             cout << "Student added successfully!\n";
             break;
         }
@@ -259,10 +273,9 @@ void submitAssignment(Student* user) {
     }
     
     Submission* submission = new Submission(
-        user->getEnrollment(), 
-        user->getName(), 
-        assignmentId, 
-        submissionDate
+        user,
+        targetAssignment, 
+        false // Assuming not late for simplicity
     );
     
     cout << "Enter file names (type 'done' to finish):\n";
@@ -283,8 +296,6 @@ void assignmentActivities(Student* user) {
     
     while (true) {
         cout << "\n=== Assignment Activities ===\n";
-        cout << "1. Create Assignment\n";
-        cout << "2. Modify Assignment\n";
         cout << "3. View Submissions\n";
         cout << "4. Submit Assignment\n";
         cout << "5. View All Assignments\n";
@@ -292,12 +303,7 @@ void assignmentActivities(Student* user) {
         cout << "Enter choice: "; cin >> choice;
         
         switch (choice) {
-            case 1:
-                createAssignment(user);
-                break;
-            case 2:
-                modifyAssignment(user);
-                break;
+            
             case 3:
                 viewSubmissions(user);
                 break;
@@ -364,7 +370,9 @@ int main() {
                 showStudentInfo(currentUser);
                 break;
             case 2:
-                createClub(currentUser);
+                Admin* admin = new Admin(currentUser->getName(), currentUser->getEnrollment(), currentUser->getMail(), currentUser->getGraduationYear(), currentUser->getCGPA(), nullptr, "");
+                clubs.push_back(new Club(0, "", "", admin));
+                createClub(admin);
                 break;
             case 3:
                 clubActivities(currentUser);
