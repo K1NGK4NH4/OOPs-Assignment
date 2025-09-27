@@ -8,6 +8,11 @@ Student::Student()
 Student::Student(string n,int e, string m, int gradYear, float g)
     : name(n),Enrollment(e),mail(m),GraduationYear(gradYear),cgpa(g) {}
 
+bool Student::login(int enroll,string pass) {
+    // Access admin from club
+    if(enroll == Enrollment && pass == password) return true;
+    return false;
+}
 // Join a club
 void Student::accessJoinClub(Club* c) {
     // Access admin from club
@@ -39,6 +44,9 @@ Vector<Assignment*> Student::getAssignment(Club* c) const {
 // Getters
 string Student::getName() const {
      return name; 
+}
+string Student::getMail() const {
+     return mail; 
 }
 int Student::getEnrollment() const {
      return Enrollment; 

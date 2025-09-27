@@ -11,6 +11,7 @@ using namespace std;
 
 class Student {
 protected:
+    string password;
     string name;
     int Enrollment;
     string mail;
@@ -26,7 +27,7 @@ public:
     Student(string n,int Enrollment, string m, int gradYear, float g);
 
     // Methods
-
+    bool login(int Enrollment,string password);
     void accessJoinClub(Club* c);
     bool leaveClub(Club* c);
     Vector<Club*> ViewClubs() const;
@@ -37,6 +38,7 @@ public:
     // Getters
     string getName() const;
     int getEnrollment() const;
+    string getMail() const;
     int getGraduationYear() const;
     float getCGPA() const;
 };
