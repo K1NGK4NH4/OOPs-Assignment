@@ -29,7 +29,7 @@ Student* registerStudent() {
     cin.ignore();
     cout << "Set password: "; getline(cin, password);
 
-    Student* s = new Student(name, mail, gradYear, cgpa, id, password);
+    Student* s = new Student(name, id, mail, gradYear, cgpa);
     students.push_back(s);
 
     cout << "Registration successful!\n";
@@ -61,13 +61,13 @@ void showStudentInfo(Student* s) {
     cout << "\n=== Student Info ===\n";
     cout << "Name: " << s->getName() << "\n";
     cout << "Email: " << s->getMail() << "\n";
-    cout << "Graduation Year: " << s->getGradYear() << "\n";
-    cout << "CGPA: " << s->getCgpa() << "\n";
+    cout << "Graduation Year: " << s->getGraduationYear() << "\n";
+    cout << "CGPA: " << s->getCGPA() << "\n";
     cout << "Enrollment ID: " << s->getEnrollment() << "\n";
 }
 
 // Page 2: Create a new club
-void createClub(Student* admin) {
+void createClub(Admin* admin) {
     int id;
     string name, mail;
     cout << "\n=== Create Club ===\n";
@@ -75,6 +75,8 @@ void createClub(Student* admin) {
     cin.ignore();
     cout << "Enter club name: "; getline(cin, name);
     cout << "Enter club email: "; getline(cin, mail);
+    static int nextClubId = 1;
+    id = nextClubId++;
     Club* c = new Club(id, name, mail, admin);
     clubs.push_back(c);
     cout << "Club created with you as admin.\n";
