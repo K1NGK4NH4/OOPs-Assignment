@@ -10,7 +10,7 @@
 using namespace std;
 
 class Student {
-private:
+protected:
     string name;
     int Enrollment;
     string mail;
@@ -36,6 +36,7 @@ public:
     void getAssignment(Club* c) const;
 
     // Getters
+    string getName() const;
     int getEnrollment() const;
     int getGraduationYear() const;
     float getCGPA() const;

@@ -1,24 +1,26 @@
 #ifndef ADMIN_H
 #define ADMIN_H
 
-#include "Person.h"
 #include "Club.h"
 #include "Student.h"
 #include "Assignment.h"
 using namespace std;
 
-class Admin : public Person {
+class Admin : public Student {
+    Club* club;
+    string joiningDate;
 public:
-    Admin(string n, int a, string i);
+    Admin();
+    Admin(string n,int Enrollment, string m, int gradYear, float g,Club* c,string joining);
 
     // Admin functionalities
-    void addMember(Club& club, Student* s);
-    void removeMember(Club& club, Student* s);
+    bool addMember( Student* s);
+    void removeMember(int studentId);
 
-    void addAssignment(Club& club, Assignment* a);
-    void removeAssignment(Club& club, Assignment* a);
+    void addAssignment(Assignment* a);
+    void removeAssignment(int assignmentId);
 
-    void setNewAdmin(Club& club, Student* newAdmin);
+    void setNewAdmin(Student* newAdmin);
 };
 
 #endif
