@@ -3,7 +3,7 @@
 #include "Student.h"
 #include "Vector.h"
 #include "Club.h"
-#include "Assigment.h"
+#include "Assignment.h"
 #include "Submissions.h"
 
 using namespace std;

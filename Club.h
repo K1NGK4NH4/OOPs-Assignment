@@ -3,7 +3,7 @@
 
 #include <string>
 #include <iostream>
-#include "Assigment.h"
+#include "Assignment.h"
 #include "Vector.h"
 #include "Submissions.h"
 #include "Student.h"
