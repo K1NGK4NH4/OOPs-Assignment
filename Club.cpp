@@ -43,7 +43,7 @@ void Club::setMail(const string& m) {
     mail = m;
 }
 
-void Club::setAdmin(Student* a) {
+void Club::setAdmin(Admin* a) {
     admin = a;
 }
 

@@ -30,12 +30,12 @@ public:
     string getMail() const;
     Vector<Assignment*> getAssignments() const;
     Vector<Student*> getMembers() const;
-    Student* getAdmin() const;
+    Admin* getAdmin() const;
 
     // Setters
     void setName(const string& n);
     void setMail(const string& m);
-    void setAdmin(Student* a);
+    void setAdmin(Admin* a);
 
     // Member management
     void addMember(Student* s);

@@ -57,7 +57,7 @@ public:
     void addAssignment(Assignment* a);
     void removeAssignment(int assignmentId);
 
-    void setNewAdmin(Student* newAdmin);
+    void setNewAdmin(Admin* newAdmin);
 };
 
 #endif

@@ -20,9 +20,9 @@ Assignment::Assignment(const Assignment& other)
       description(other.description),
       Givenby(other.Givenby),
       Iterations(other.Iterations),
-      StudentIds(other.StudentIds),
+      Students(other.Students),
       completed(other.completed),
-      issueingClubId(other.issueingClubId)
+      issueingClub(other.issueingClub)
 {
     // Shallow copy of submission pointers
     for (int i = 0; i < other.Assignment_Submission.size(); ++i) {
@@ -38,9 +38,9 @@ Assignment& Assignment::operator=(const Assignment& other) {
         description = other.description;
         Givenby = other.Givenby;
         Iterations = other.Iterations;
-        StudentIds = other.StudentIds;
+        Students = other.Students;
         completed = other.completed;
-        issueingClubId = other.issueingClubId;
+        issueingClub = other.issueingClub;
 
         Assignment_Submission = Vector<Submission*>();
         for (int i = 0; i < other.Assignment_Submission.size(); ++i) {
@@ -75,11 +75,11 @@ string Assignment::getDescription() const {
     return description;
 }
 
-int Assignment::getIssuingClubId() const {
-    return issueingClubId;
+Club* Assignment::getIssueingClub() const {
+    return issueingClub;
 }
 
-Vector<string> Assignment::getGivenBy() const {
+Admin* Assignment::getGivenBy() const {
     return Givenby;
 }
 
@@ -87,8 +87,8 @@ Vector<string> Assignment::getIterations() const {
     return Iterations;
 }
 
-Vector<int> Assignment::getStudentIds() const {
-    return StudentIds;
+Vector<Student*> Assignment::getStudents() const {
+    return Students;
 }
 
 Vector<Submission*> Assignment::getSubmissions() const {
@@ -102,9 +102,10 @@ void Assignment::details() const {
     cout << "Description: " << description << endl;
 
     cout << "Given by: ";
-    for (int i = 0; i < Givenby.size(); ++i) {
-        cout << Givenby[i] << " ";
-    }
+    if (Givenby)
+        cout << Givenby->getName();
+    else
+        cout << "N/A";
     cout << endl;
 
     cout << "Iterations: ";
@@ -114,20 +115,17 @@ void Assignment::details() const {
     cout << endl;
 
     cout << "Completed: " << (completed ? "Yes" : "No") << endl;
-    cout << "Issuing Club ID: " << issueingClubId << endl;
+    cout << "Issuing Club ID: " << issueingClub->getClubId() << endl;
 }
 
 // Modifiers
-void Assignment::addTeacher(const string& teacher) {
-    Givenby.push_back(teacher);
-}
 
 void Assignment::addIteration(const string& iteration) {
     Iterations.push_back(iteration);
 }
 
-void Assignment::addStudent(int studentId) {
-    StudentIds.push_back(studentId);
+void Assignment::addStudent(Student* student) {
+    Students.push_back(student);
 }
 
 void Assignment::addSubmission(Submission* submission) {
