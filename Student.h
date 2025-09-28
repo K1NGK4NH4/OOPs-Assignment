@@ -28,7 +28,7 @@ protected:
 public:
     // Constructors
     Student();
-    Student(string n,int Enrollment, string m, int gradYear, float g);
+    Student(string n,int Enrollment, string m, int gradYear, float g ,string pass="0");
 
     // Methods
     bool login(int Enrollment,string password);
@@ -39,7 +39,6 @@ public:
 
     void submitAssignment(Submission* s);
     Vector<Assignment*> getAssignment(Club* c) const;
-
     // Getters
     string getName() const;
     int getEnrollment() const;
@@ -55,7 +54,7 @@ class Admin : public Student {
     Club* club;
     string joiningDate;
 public:
-    Admin(string n, int e, string m, int gradYear, float g, Club* c, string join);
+    Admin(string n, int e, string m, int gradYear, float g, Club* c, string join,string pass="0");
 
     // Admin functionalities
     void addMember(Student* s);

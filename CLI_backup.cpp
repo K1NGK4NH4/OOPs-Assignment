@@ -13,59 +13,6 @@ Vector<Student*> students;
 Vector<Club*> clubs;
 Vector<Assignment*> assignments;
 
-// Function to initialize with fake data
-void initializeFakeData() {
-    // Create some fake students
-    Student* student1 = new Student("Alice Johnson", 1001, "alice@email.com", 2024, 3.8, "alicepass" );
-    Student* student2 = new Student("Bob Smith", 1002, "bob@email.com", 2025, 3.6, "bobpass");
-    Student* student3 = new Student("Charlie Brown", 1003, "charlie@email.com", 2024, 3.9, "charliepass");
-    students.push_back(student1);
-    students.push_back(student2);
-    students.push_back(student3);
-    
-    // Create some fake admins and clubs
-    Admin* admin1 = new Admin("David Wilson", 2001, "david@email.com", 2023, 3.7, nullptr, "2023-01-15");
-    Admin* admin2 = new Admin("Eva Davis", 2002, "eva@email.com", 2023, 3.8, nullptr, "2023-02-20");
-    students.push_back(admin1);
-    students.push_back(admin2);
-    
-    // Create clubs
-    Club* club1 = new Club(1, "Tech Club", "tech@club.com", admin1);
-    Club* club2 = new Club(2, "Art Club", "art@club.com", admin2);
-    clubs.push_back(club1);
-    clubs.push_back(club2);
-    
-    // Add members to clubs
-    club1->addMember(admin1);
-    club1->addMember(student1);
-    club1->addMember(student2);
-    admin1->AddClub(club1);
-    student1->AddClub(club1);
-    student2->AddClub(club1);
-    
-    club2->addMember(admin2);
-    club2->addMember(student2);
-    club2->addMember(student3);
-    admin2->AddClub(club2);
-    student2->AddClub(club2);
-    student3->AddClub(club2);
-    
-    // Create some fake assignments
-    Assignment* assignment1 = new Assignment("Web Development Project", "Create a responsive website", admin1, "v1.0", club1);
-    Assignment* assignment2 = new Assignment("Art Portfolio", "Create a digital art portfolio", admin2, "v1.0", club2);
-    assignments.push_back(assignment1);
-    assignments.push_back(assignment2);
-    
-    club1->addAssignment(assignment1);
-    club2->addAssignment(assignment2);
-    
-    cout << "=== Fake Data Initialized ===\n";
-    cout << "Students: Alice Johnson (1001), Bob Smith (1002), Charlie Brown (1003)\n";
-    cout << "Admins: David Wilson (2001), Eva Davis (2002)\n";
-    cout << "Clubs: Tech Club (ID: 1), Art Club (ID: 2)\n";
-    cout << "Assignments: Web Development Project, Art Portfolio\n\n";
-}
-
 // Function to register a new student
 Student* registerStudent() {
     string name, mail, password;
@@ -124,16 +71,27 @@ void createClub(Admin* admin) {
     int id;
     string name, mail;
     cout << "\n=== Create Club ===\n";
+    cout << "Enter club ID: "; cin >> id;
     cin.ignore();
     cout << "Enter club name: "; getline(cin, name);
     cout << "Enter club email: "; getline(cin, mail);
-    static int nextClubId = 3; // Start from 3 since we have clubs 1 and 2
+    static int nextClubId = 1;
     id = nextClubId++;
     Club* c = new Club(id, name, mail, admin);
     clubs.push_back(c);
-    // Add the admin as a member of the club and add the club to the admin's club list
-    c->addMember(admin);
-    admin->AddClub(c);
+    // Add the club to the admin's list of clubs (as a Student)
+    // Find the student object corresponding to the admin's enrollment
+    Student* studentObj = nullptr;
+    for (int i = 0; i < students.size(); ++i) {
+        if (students[i]->getEnrollment() == admin->getEnrollment()) {
+            studentObj = students[i];
+            break;
+        }
+    }
+    if (studentObj) {
+        studentObj->AddClub(c);
+        c->addMember(studentObj);
+    }
     cout << "Club created with you as admin.\n";
 }
 
@@ -224,24 +182,29 @@ void createAssignment(Admin* user) {
     cout << "Enter iteration: "; getline(cin, iteration);
     cout << "Enter issuing club ID: "; cin >> clubId;
     
-    // Check if the club exists and find the correct club
-    Club* targetClub = nullptr;
+    // Check if the club exists
+    bool clubExists = false;
     for (int i = 0; i < clubs.size(); ++i) {
         if (clubs[i]->getClubId() == clubId) {
-            targetClub = clubs[i];
+            clubExists = true;
             break;
         }
     }
-    if (!targetClub) {
+    if (!clubExists) {
         cout << "Club with ID " << clubId << " does not exist!\n";
         return;
     }
     
-    Assignment* a = new Assignment(title, description, user, iteration, targetClub);
+    Assignment* a = new Assignment(title, description, user, iteration, clubs[clubId - 1]);
     assignments.push_back(a);
     
-    // Add assignment to the club
-    targetClub->addAssignment(a);
+    // Add assignment to the club if found
+    for (int i = 0; i < clubs.size(); ++i) {
+        if (clubs[i]->getClubId() == clubId) {
+            clubs[i]->addAssignment(a);
+            break;
+        }
+    }
     
     cout << "Assignment created successfully with ID: " << a->getAssignmentId() << "\n";
 }
@@ -269,7 +232,6 @@ void modifyAssignment(Admin* user) {
     cout << "2. Add Iteration\n";
     cout << "3. Add Student\n";
     cout << "4. Mark as Completed\n";
-    
     cout << "0. Back\n";
     cout << "Enter choice: "; cin >> choice;
     cin.ignore();
@@ -368,18 +330,11 @@ void submitAssignment(Student* user) {
         cout << "Assignment not found!\n";
         return;
     }
-
-    // Check if submission is late
-    bool isLate = false;
-    Vector<string> iterations = targetAssignment->getIterations();
-    if (!iterations.empty() && submissionDate > iterations[iterations.size() - 1]) {
-        isLate = true;
-    }
-
+    
     Submission* submission = new Submission(
         user,
         targetAssignment, 
-        isLate
+        false // Assuming not late for simplicity
     );
     
     cout << "Enter file names (type 'done' to finish):\n";
@@ -432,7 +387,6 @@ void assignmentActivities(Student* user) {
         }
     }
 }
-
 void adminMenu(Admin* admin,Club* club) {
     int choice;
     while (true) {
@@ -463,9 +417,10 @@ void adminMenu(Admin* admin,Club* club) {
                     bool found = false;
                     for (int i = 0; i < assignments.size(); ++i) {
                         if (assignments[i]->getAssignmentId() == assignmentId) {
-                            assignments.pop(assignments[i]);
-                            cout << "Assignment removed successfully!\n";
-                            found = true;                
+                            // delete assignments[i];
+                            // assignments.erase(assignments.begin() + i);
+                            // cout << "Assignment removed successfully!\n";
+                            // found = true;
                             break;
                         }
                     }
@@ -531,7 +486,6 @@ void adminMenu(Admin* admin,Club* club) {
                     admin->setNewAdmin(&newAdmin);
                     cout << "New admin assigned successfully!\n";
                 }
-                break;  // FIXED: Added missing break statement
             case 0:
                 return;
             default:
@@ -539,13 +493,9 @@ void adminMenu(Admin* admin,Club* club) {
         }
     }
 }
-
 int main() {
     int choice;
     Student* currentUser = nullptr;
-
-    // Initialize with fake data
-    initializeFakeData();
 
     // Login / Registration loop
     while (!currentUser) {
@@ -587,10 +537,7 @@ int main() {
             case 2: {
                 Admin* admin = new Admin(currentUser->getName(), currentUser->getEnrollment(), currentUser->getMail(), currentUser->getGraduationYear(), currentUser->getCGPA(), nullptr, "");
                 createClub(admin);
-                // FIXED: Update currentUser to be the admin so they can see their clubs
-                currentUser = admin;
-                // Also add the admin to the students vector so they can be found later
-                students.push_back(admin);
+
                 break;
             }
             case 3:
@@ -619,10 +566,9 @@ int main() {
                         cout << "Access denied. You are not an admin.\n";
                     }
                 }
-                break;  // FIXED: Added missing break statement
             case 0:
                 cout << "Logging out...\n";
-                return 0;
+                return main();
             default:
                 cout << "Invalid choice!\n";
         }

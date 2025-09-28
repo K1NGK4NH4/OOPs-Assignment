@@ -8,8 +8,8 @@ Student::Student()
     : Student("", 0, "",0,0.0){}
 
 // Parameterized constructor
-Student::Student(string n,int e, string m, int gradYear, float g)
-    : name(n),Enrollment(e),mail(m),GraduationYear(gradYear),cgpa(g) {}
+Student::Student(string n,int e, string m, int gradYear, float g,string pass)
+    : name(n),Enrollment(e),mail(m),GraduationYear(gradYear),cgpa(g),password(pass) {}
 
 bool Student::login(int enroll,string pass) {
     // Access admin from club
@@ -67,8 +67,8 @@ float Student::getCGPA() const {
 
 
 
-Admin::Admin(string n, int e, string m, int gradYear, float g, Club* c, string join)
-        : Student(n, e, m, gradYear, g), club(c), joiningDate(join) {}
+Admin::Admin(string n, int e, string m, int gradYear, float g, Club* c, string join, string pass)
+        : Student(n, e, m, gradYear, g, pass), club(c), joiningDate(join) {}
 
 // Add member
 void Admin::addMember(Student* s){
