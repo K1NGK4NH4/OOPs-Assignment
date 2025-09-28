@@ -99,6 +99,9 @@ void clubActivities(Student* user) {
                 cout << "Club ID: " << user->ViewClubs()[i]->getClubId() 
                      << ", Name: " << user->ViewClubs()[i]->getName() << "\n";
             }
+            if (user->ViewClubs().empty()) {
+                cout << "No clubs\n";
+            }
             break;
         case 2:
             // TODO: implement join club
@@ -106,10 +109,46 @@ void clubActivities(Student* user) {
                 cout << "Club ID: " << clubs[i]->getClubId() 
                      << ", Name: " << clubs[i]->getName() << "\n";
             }
+            if (clubs.empty()) {
+                cout << "No clubs\n";
+            }
+            cout << "Want to join? (y/n): ";
+            char joinChoice;
+            cin >> joinChoice;
+            cin.ignore();
+            if (joinChoice != 'y' && joinChoice != 'Y') {
+                cout << "Cancelled joining club.\n";
+                break;
+            }
+            cout<< "Enter club ID to join: "; cin >> choice;
+            for(int i = 0; i < clubs.size(); ++i) {
+                if (clubs[i]->getClubId() == choice) {
+                    user->AddClub(clubs[i]);
+                    clubs[i]->addMember(user);
+                    cout << "Joined club successfully\n";
+                    break;
+                }
+            }
             break;
         case 3:
             // TODO: implement leave club
-            cout << "[Leave Club] not yet implemented.\n";
+            cout << "Want to leave? (y/n): ";
+            char leaveChoice;
+            cin >> leaveChoice;
+            cin.ignore();
+            if (leaveChoice != 'y' && leaveChoice != 'Y') {
+                cout << "Cancelled leaving club.\n";
+                break;
+            }
+            cout << "Enter club ID to leave: "; cin >> choice;
+            for(int i = 0; i < user->ViewClubs().size(); ++i) {
+                if (user->ViewClubs()[i]->getClubId() == choice) {
+                    user->leaveClub(user->ViewClubs()[i]);
+                    clubs[choice - 1]->removeMember(user->getEnrollment());
+                    cout << "Left club successfully\n";
+                    break;
+                }
+            }
             break;
         case 0:
             return;
@@ -158,7 +197,7 @@ void createAssignment(Admin* user) {
 }
 
 // Modify assignment function
-void modifyAssignment(Student* user) {
+void modifyAssignment(Admin* user) {
     int assignmentId, choice;
     cout << "\n=== Modify Assignment ===\n";
     cout << "Enter assignment ID to modify: "; cin >> assignmentId;
@@ -263,7 +302,8 @@ void submitAssignment(Student* user) {
     cout << "\n=== Submit Assignment ===\n";
     cout << "Enter assignment ID: "; cin >> assignmentId;
     cin.ignore();
-    cout << "Enter submission date (YYYY-MM-DD): "; getline(cin, submissionDate);
+    cout << "Enter submission date (YYYY-MM-DD): ";
+    getline(cin, submissionDate);
     
     Assignment* targetAssignment = nullptr;
     for (int i = 0; i < assignments.size(); ++i) {
@@ -334,7 +374,112 @@ void assignmentActivities(Student* user) {
         }
     }
 }
-
+void adminMenu(Admin* admin,Club* club) {
+    int choice;
+    while (true) {
+        cout << "\n=== Admin Menu ===\n";
+        cout << "1. Create Assignment\n";
+        cout << "2. Modify Assignment\n";
+        cout << "3. Remove Assignment\n";
+        cout << "4. Add members\n";
+        cout << "5. Remove Members\n";
+        cout << "6. Assign New Admin\n";
+        cout << "0. Back\n";
+        cout << "Enter choice: "; 
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                createAssignment(admin);
+                break;
+            case 2:
+                modifyAssignment(admin);
+                break;
+            case 3:
+                // Remove Assignment
+                {
+                    int assignmentId;
+                    cout << "Enter assignment ID to remove: "; 
+                    cin >> assignmentId;
+                    bool found = false;
+                    for (int i = 0; i < assignments.size(); ++i) {
+                        if (assignments[i]->getAssignmentId() == assignmentId) {
+                            // delete assignments[i];
+                            // assignments.erase(assignments.begin() + i);
+                            // cout << "Assignment removed successfully!\n";
+                            // found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        cout << "Assignment not found!\n";
+                    }
+                }
+                break;
+            case 4:
+                // Add members
+                {
+                    int studentId;
+                    cout << "Enter student ID to add: ";
+                    cin >> studentId;
+                    Student* targetStudent = nullptr;
+                    for (int i = 0; i < students.size(); ++i) {
+                        if (students[i]->getEnrollment() == studentId) {
+                            targetStudent = students[i];
+                            break;
+                        }
+                    }
+                    if (!targetStudent) {
+                        cout << "Student not found!\n";
+                        break;
+                    }
+                    club->addMember(targetStudent);
+                    cout << "Student added to club successfully!\n";
+                }
+                break;
+            case 5:
+                // Remove Members
+                {
+                    int studentId;
+                    cout << "Enter student ID to remove: "; 
+                    cin >> studentId;
+                    Club* targetClub = admin->getClub();
+                    if (!targetClub) {
+                        cout << "Club not found!\n";
+                        break;
+                    }
+                    club->removeMember(studentId);
+                    cout << "Student removed from club (if present).\n";
+                }
+                break;
+            case 6:
+                // Assign New Admin
+                {
+                    int studentId;
+                    cout << "Enter student ID to assign as new admin: "; 
+                    cin >> studentId;
+                    Student* targetStudent = nullptr;
+                    for (int i = 0; i < students.size(); ++i) {
+                        if (students[i]->getEnrollment() == studentId) {
+                            targetStudent = students[i];
+                            break;
+                        }
+                    }
+                    if (!targetStudent) {
+                        cout << "Student not found!\n";
+                        break;
+                    }
+                    Admin newAdmin= Admin(targetStudent->getName(), targetStudent->getEnrollment(), targetStudent->getMail(), targetStudent->getGraduationYear(), targetStudent->getCGPA(), club, "");
+                    admin->setNewAdmin(&newAdmin);
+                    cout << "New admin assigned successfully!\n";
+                }
+            case 0:
+                return;
+            default:
+                cout << "Invalid choice!\n";
+        }
+    }
+}
 int main() {
     int choice;
     Student* currentUser = nullptr;
@@ -368,6 +513,7 @@ int main() {
         cout << "2. Create Club\n";
         cout << "3. Club Activities\n";
         cout << "4. Assignment Activities\n";
+        cout << "5. Admin Menu\n";
         cout << "0. Logout\n";
         cout << "Enter choice: "; cin >> choice;
 
@@ -387,6 +533,26 @@ int main() {
             case 4:
                 assignmentActivities(currentUser);
                 break;
+            case 5:
+                {
+                    cout<<"Enter ClubId to access admin menu: ";
+                    int clubId; 
+                    cin>>clubId;
+                    Admin* admin = nullptr;
+                    Club* club = nullptr;
+                    for (int i = 0; i < clubs.size(); ++i) {
+                        if (clubs[i]->getClubId() == clubId && clubs[i]->getAdmin()->getEnrollment() == currentUser->getEnrollment()) {
+                            admin = clubs[i]->getAdmin();
+                            club = clubs[i];
+                            break;
+                        }
+                    }
+                    if (admin) {
+                        adminMenu(admin,club);
+                    } else {
+                        cout << "Access denied. You are not an admin.\n";
+                    }
+                }
             case 0:
                 cout << "Logging out...\n";
                 return 0;

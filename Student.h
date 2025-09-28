@@ -33,6 +33,7 @@ public:
     // Methods
     bool login(int Enrollment,string password);
     void accessJoinClub(Club* c);
+    void AddClub(Club* c);
     bool leaveClub(Club* c);
     Vector<Club*> ViewClubs() const;
 
@@ -45,6 +46,7 @@ public:
     string getMail() const;
     int getGraduationYear() const;
     float getCGPA() const;
+    virtual ~Student() {}
 };
 
 
@@ -55,7 +57,6 @@ class Admin : public Student {
 public:
     Admin(string n, int e, string m, int gradYear, float g, Club* c, string join);
 
-
     // Admin functionalities
     void addMember(Student* s);
     void removeMember(int studentId);
@@ -64,6 +65,8 @@ public:
     void removeAssignment(int assignmentId);
 
     void setNewAdmin(Admin* newAdmin);
+    Club* getClub() const;
+    string getJoiningDate() const;
 };
 
 #endif

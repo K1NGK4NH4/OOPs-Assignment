@@ -21,7 +21,10 @@ void Student::accessJoinClub(Club* c) {
     // Access admin from club
     clubRequest.push_back(c);
 }
-
+// Add a club
+void Student::AddClub(Club* c){
+       Clubs.push_back(c);
+}
 // Leave a club
 bool Student::leaveClub(Club* c) {
     Clubs.pop(c);
@@ -91,3 +94,8 @@ void Admin::removeAssignment(int assignmentId) {
 void Admin::setNewAdmin(Admin* newAdmin) {
     club->setAdmin(newAdmin);
 }
+Club* Admin:: getClub() const{
+         return club; 
+    }
+string Admin :: getJoiningDate() const {
+         return joiningDate; }
