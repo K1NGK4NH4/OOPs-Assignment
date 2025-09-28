@@ -95,11 +95,17 @@ void clubActivities(Student* user) {
     switch (choice) {
         case 1:
             // TODO: implement listing clubs for which user is member/admin
-            cout << "[List My Clubs] not yet implemented.\n";
+            for(int i = 0; i < user->ViewClubs().size(); ++i) {
+                cout << "Club ID: " << user->ViewClubs()[i]->getClubId() 
+                     << ", Name: " << user->ViewClubs()[i]->getName() << "\n";
+            }
             break;
         case 2:
             // TODO: implement join club
-            cout << "[Join Club] not yet implemented.\n";
+           for(int i = 0; i < clubs.size(); ++i) {
+                cout << "Club ID: " << clubs[i]->getClubId() 
+                     << ", Name: " << clubs[i]->getName() << "\n";
+            }
             break;
         case 3:
             // TODO: implement leave club
