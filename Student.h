@@ -17,8 +17,8 @@ class Student {
 protected:
     string password;
     string name;
-    int Enrollment;
     string mail;
+    int Enrollment;
     int GraduationYear;
     float cgpa;
     Vector<Club*> Clubs;
@@ -39,6 +39,12 @@ public:
 
     void submitAssignment(Submission* s);
     Vector<Assignment*> getAssignment(Club* c) const;
+    //setters
+    void setName(const string& n) { name = n; }
+    void setMail(const string& m) { mail = m; }
+    void setGraduationYear(int year) { GraduationYear = year; }
+    void setCGPA(float g) { cgpa = g; }
+    
     // Getters
     string getName() const;
     int getEnrollment() const;

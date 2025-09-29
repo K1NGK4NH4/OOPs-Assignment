@@ -109,10 +109,9 @@ void Club::listMembers() const {
         return;
     }
     for (int i = 0; i < members.size(); ++i) {
-        // Assuming Student has a display or similar method
-        // members[i]->viewCredentials();
-        cout << "---------------------------" << endl;
+        cout<<members[i]->getName()<<" (ID: "<<members[i]->getEnrollment()<<")"<< " ";
     }
+    cout << "---------------------------" << endl;
 }
 
 // Display club info
@@ -127,5 +126,7 @@ void Club::display() const {
         cout << "Admin: None" << endl;
     }
     cout << "Number of Members: " << members.size() << endl;
+    cout<< "Members: ";
+    listMembers();
     cout << "Number of Assignments: " << assignments.size() << endl;
 }
