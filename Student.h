@@ -29,7 +29,7 @@ public:
     // Constructors
     Student();
     Student(string n,int Enrollment, string m, int gradYear, float g ,string pass="0");
-
+    Student(Student* other);
     // Methods
     bool login(int Enrollment,string password);
     void accessJoinClub(Club* c);
@@ -44,23 +44,31 @@ public:
     void setMail(const string& m) { mail = m; }
     void setGraduationYear(int year) { GraduationYear = year; }
     void setCGPA(float g) { cgpa = g; }
-    
+
     // Getters
     string getName() const;
     int getEnrollment() const;
     string getMail() const;
     int getGraduationYear() const;
     float getCGPA() const;
+    
+    Vector<Club*> getClubRequest() const {
+        if(clubRequest.empty()) return Vector<Club*>(); ;
+        return clubRequest;
+    }
     virtual ~Student() {}
+
 };
 
 
 
-class Admin : public Student {
+class Admin  {
     Club* club;
+    Student* student;
     string joiningDate;
 public:
-    Admin(string n, int e, string m, int gradYear, float g, Club* c, string join,string pass="0");
+    Admin(Student* s ,string join );
+
 
     // Admin functionalities
     void addMember(Student* s);
@@ -70,8 +78,12 @@ public:
     void removeAssignment(int assignmentId);
 
     void setNewAdmin(Admin* newAdmin);
+    void setClub(Club* c);
     Club* getClub() const;
     string getJoiningDate() const;
+    Student* getStudent() const { return student; }
 };
+
+
 
 #endif

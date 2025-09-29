@@ -3,8 +3,13 @@
 #include "Assignment.h"
 
 // Constructor
-Club::Club(int id, const string& n, const string& m, Admin* a)
-    : clubId(id), name(n), mail(m), admin(a) {}
+Club::Club( const string& n, const string& m, Admin* a) : name(n), mail(m), admin(a) {
+    static int ClubidCounter = 1;
+    clubId = ClubidCounter++;
+    members = Vector<Student*>();
+    assignments = Vector<Assignment*>();
+    members.push_back(a->getStudent());
+    }
 
 // Destructor
 Club::~Club() {
@@ -46,11 +51,20 @@ void Club::setMail(const string& m) {
 }
 
 void Club::setAdmin(Admin* a) {
-    admin = a;
+    
+    if (a) {
+        a->setClub(this);
+        admin = a;
+    }
 }
 
 // Member management
 void Club::addMember(Student* s) {
+    for (int i = 0; i < members.size(); ++i) {
+        if (members[i] == s) {
+            return;
+        }
+    }
     members.push_back(s);
 }
 
@@ -99,7 +113,6 @@ void Club::listAssignments() const {
     }
     for (int i = 0; i < assignments.size(); ++i) {
         assignments[i]->details();
-        cout << "---------------------------" << endl;
     }
 }
 
@@ -109,9 +122,9 @@ void Club::listMembers() const {
         return;
     }
     for (int i = 0; i < members.size(); ++i) {
-        cout<<members[i]->getName()<<" (ID: "<<members[i]->getEnrollment()<<")"<< " ";
+        cout<<members[i]->getName()<<" (ID: "<<members[i]->getEnrollment()<<")"<< ", ";
     }
-    cout << "---------------------------" << endl;
+    cout << endl;
 }
 
 // Display club info
@@ -120,8 +133,8 @@ void Club::display() const {
     cout << "Name: " << name << endl;
     cout << "Mail: " << mail << endl;
     if (admin) {
-        cout << "Admin: " << admin->getName()
-             << " (ID: " << admin->getEnrollment() << ")" << endl;
+        cout << "Admin: " << admin->getStudent()->getName()
+             << " (ID: " << admin->getStudent()->getEnrollment() << ")" << endl;
     } else {
         cout << "Admin: None" << endl;
     }
@@ -130,3 +143,4 @@ void Club::display() const {
     listMembers();
     cout << "Number of Assignments: " << assignments.size() << endl;
 }
+

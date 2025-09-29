@@ -23,7 +23,7 @@ private:
 
 public:
     // Constructor & Destructor
-    Club(int id = 0, const string& n = "", const string& m = "", Admin* a = nullptr);
+    Club( const string& n = "", const string& m = "", Admin* a = nullptr);
     ~Club();
 
     // Getters

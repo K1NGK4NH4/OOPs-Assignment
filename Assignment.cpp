@@ -106,7 +106,7 @@ void Assignment::details() const {
 
     cout << "Given by: ";
     if (Givenby)
-        cout << Givenby->getName();
+        cout << Givenby->getStudent()->getName();
     else
         cout << "N/A";
     cout << endl;

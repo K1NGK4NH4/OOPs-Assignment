@@ -13,6 +13,9 @@ using namespace std;
 Vector<Student*> students;
 Vector<Club*> clubs;
 Vector<Assignment*> assignments;
+Vector<Submission*> submissions;
+Vector<Admin*> admins;
+
 
 
 
@@ -34,6 +37,26 @@ void MyClubs(Student* currentStudent);
 
 
 int main(){
+    Student* s1 = new Student("John Doe", 123456, "johndoe@example.com", 2022, 3.5, "123");
+    
+    Student* s2 = new Student("Jennifer", 654321, "Feeffer@example.com", 2023, 3.8, "321");
+    Admin* a1 = new Admin(s1, "2021-01-01");
+    Admin* a2 = new Admin(s2, "2020-05-01");
+    Club* c1 = new Club("Computer Science Club", "csclub@example.com", a1);
+    Club* c2 = new Club("Engineering Club", "engclub@example.com", a2);
+    a1->setClub(c1);
+    a2->setClub(c2);
+
+    clubs.push_back(c1);
+    clubs.push_back(c2);
+    students.push_back(s1);
+    students.push_back(s2);
+    admins.push_back(a1);
+    admins.push_back(a2);
+    // Test: Student s2 requests to join Club c1
+    s2->accessJoinClub(c1);
+
+    cout<<"Starting Application..."<<endl;
     Signup();
     cout<<"Thanks for using the application!"<<endl;
     return 0;
@@ -43,11 +66,18 @@ int main(){
 
 void Signup(){ 
     int choice;
+    cout<< "\nWelcome to the Student Club Management System!" << endl;
+    cout<< "----------------------------"<<endl;
     cout << "1. Login" << endl;
     cout << "2. Register" << endl;
     cout << "3. Exit" << endl;
+    
+    cout<< "----------------------------"<<endl;
     cout << "Enter your choice: ";
     cin >> choice;
+    cin.ignore();
+    cout<< "----------------------------"<<endl;
+
     if(choice == 1){
         int enrollment;
         string password;
@@ -112,14 +142,9 @@ void displayInfo(Student* currentStudent){
     cout << "Graduation Year: " << currentStudent->getGraduationYear() << endl;
     cout << "CGPA: " << currentStudent->getCGPA() << endl;
     cout << "Clubs Joined: ";
-    Vector<Club*> clubs = currentStudent->ViewClubs();
-    if(clubs.empty()){
+    Vector<Club*> StudentClubs = currentStudent->ViewClubs();
+    if(StudentClubs.empty()){
         cout << "None" << endl;
-    } else {
-        for(int i = 0; i < clubs.size(); i++){
-            cout << clubs[i]->getName() << " ";
-        }
-        cout << endl;
     }
     cout<<"ReEnter New Information?:(y to update / n to return to main menu)"<<endl;
     char ch; cin>>ch;
@@ -144,17 +169,21 @@ void displayInfo(Student* currentStudent){
     return;
 }
 
-void HomePage(Student* currentStudent = nullptr){
+void HomePage(Student* currentStudent ){
     int choice;
-    cout << "Welcome to the Student Club Management System!" << endl;
+    cout << "\nWelcome to the Student Club Management System!" << endl;
+    cout<< "----------------------------"<<endl;
     cout << "1. My Information" << endl;
     cout << "2. Search Student" << endl;
     cout << "3. CLub Info" << endl;    
     cout << "4. Club Requests" << endl;
     cout << "5. My Clubs" << endl;
     cout << "6. Logout" << endl;
+    cout<< "----------------------------"<<endl;
     cout << "Enter your choice: ";
     cin >> choice;
+    cin.ignore();
+    cout<< "----------------------------\n"<<endl;
     switch(choice){
         case 1:
             displayInfo(currentStudent);
@@ -230,7 +259,7 @@ void ClubInfo(Student* currentStudent){
     if(clubId == -1){
         cout << "All Clubs: " << endl;
         for(int i = 0; i < clubs.size(); i++){
-            cout << i+1 << ". " << clubs[i]->getName() << " (Club ID: " << clubs[i]->getClubId() <<" , Admin: "<< clubs[i]->getAdmin()->getName()<< ")" << endl;
+            cout << i+1 << ". " << clubs[i]->getName() << " (Club ID: " << clubs[i]->getClubId() <<" , Admin: "<< clubs[i]->getAdmin()->getStudent()->getName()<< ")" << endl;
         }
         int select = -1;
         cout << "Enter the club number to view details or 0 to return: ";
@@ -254,12 +283,13 @@ void ClubInfo(Student* currentStudent){
     return;
 }
 
+
 void ClubRequests(Student* currentStudent){
     if(currentStudent == nullptr){
         cout << "No student logged in!" << endl;
         return;
     }
-    Vector<Club*> requests = currentStudent->ViewClubs();
+    Vector<Club*> requests = currentStudent->getClubRequest();
     if(requests.empty()){
         cout << "No club requests!" << endl;
         return;
@@ -277,6 +307,12 @@ void ClubRequests(Student* currentStudent){
         return;
     }
     currentStudent->AddClub(requests[choice-1]);
-    cout << "Joined club: " << requests[choice-1]->getName() << endl;
+    cout << "Joined club successfully!" << endl;
     return;
 }
+
+void MyClubs(Student* currentStudent){
+}
+
+
+
