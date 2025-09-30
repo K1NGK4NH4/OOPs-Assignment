@@ -88,7 +88,7 @@ public:
     string getJoiningDate() const;
     Student* getStudent() const { return student; }
 
-    void setNotifications(const string& note) { notifications.push_back(note); }
+    void setNotifications(const string& note) ;
     void removeNotification(const string& note);
     void removeallnotifications();
     Vector<string> getNotifications() const;
