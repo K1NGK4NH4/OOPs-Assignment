@@ -49,10 +49,15 @@ bool Student::leaveClub(Club* c) {
 }
 
 // View clubs
-Vector<Club*> Student::ViewClubs() const {
+Vector<Club*> Student::ViewClubs(bool display) const {
+    if(display)  
+        {
+        std::cout << "Clubs Joined: ";
     for (size_t i = 0; i < Clubs.size(); i++)
-    {
-        std::cout << Clubs[i]->getName() << ", ";
+        {
+           
+            std::cout << Clubs[i]->getName() << ", ";
+        }
     }
     std::cout << std::endl;
     return Clubs;

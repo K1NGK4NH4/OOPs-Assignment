@@ -35,6 +35,7 @@ void ClubRequests(Student* currentStudent);
 
 void MyClubs(Student* currentStudent);
 
+void ClubSelected(Student* currentStudent, Club* selectedClub);
 
 int main(){
     Student* s1 = new Student("John Doe", 123456, "johndoe@example.com", 2022, 3.5, "123");
@@ -312,7 +313,79 @@ void ClubRequests(Student* currentStudent){
 }
 
 void MyClubs(Student* currentStudent){
+
+    Vector<Club*> studentClubs = currentStudent->ViewClubs(false);
+    if(studentClubs.empty()){
+        cout << "No clubs joined!" << endl;
+        return;
+    }
+    cout << "Joined Clubs: " << endl;
+    for(int i = 0; i < studentClubs.size(); i++){
+        cout << i+1 << ". " << studentClubs[i]->getName() << " (Club ID: " << studentClubs[i]->getClubId() << ") , Admin : " <<studentClubs[i]->getAdmin()->getStudent()->getName() << endl;
+    }
+    int choice;
+    cout << "Enter the club number to view details or 0 to return: ";
+    cin >> choice;
+    if(choice == 0) return;
+    if(choice < 1 || choice > studentClubs.size()){
+        cout << "Invalid choice!" << endl;
+        MyClubs(currentStudent);
+        return;
+    }
+    ClubSelected(currentStudent, studentClubs[choice-1]);
+    return;
 }
 
 
+void ClubSelected(Student* currentStudent, Club* selectedClub){
+    if(currentStudent == nullptr){
+        cout << "No student logged in!" << endl;
+        return;
+    }
+    if(selectedClub == nullptr){
+        cout << "No club selected!" << endl;
+        return;
+    }
+    string choice;
 
+    cout << "\n===== " << selectedClub->getName() <<selectedClub->getClubId() << " =====\n ===== " << selectedClub->getAdmin()->getStudent()->getName() << " =====\n";
+        cout << "\n===== " << selectedClub->getName() << " =====\n";
+        cout << "1. View Members\n";
+        cout << "2. View Admin\n";
+        cout << "3. View Assignments\n";
+        cout << "4. My Assignments\n";
+        cout << "5. My Submissions\n";
+        cout << "6. Back to Clubs\n";
+
+        if (selectedClub->getAdmin()->getStudent()->getEnrollment() == currentStudent->getEnrollment()) {
+            cout << "===== Admin Tools =====\n";
+            cout << "7. Manage Members\n";
+            cout << "   a) List Members        (7a)\n";
+            cout << "   b) Add Member          (7b)\n";
+            cout << "   c) Remove Member       (7c)\n";
+            cout << "   d) Assign Admin        (7d)\n";
+            cout << "8. Manage Assignments\n";
+            cout << "   a) Create Assignment   (8a)\n";
+            cout << "   b) Edit Assignment     (8b)\n";
+            cout << "   c) Delete Assignment   (8c)\n";
+            cout << "   d) View Submissions    (8d)\n";
+        }else{
+            cout << "===== Admin Tools =====\n";
+            cout << "7.Leave Club\n";
+            cout<<"the only admin power you have is to leave the club hahaha"<<endl;
+        }
+        cout << "Enter choice: ";
+        cin >> choice;
+        cin.ignore();
+        if (choice == "1") {
+        }
+        else if (choice =="2"){}
+        else if (choice == "3"){}
+        else if (choice == "4"){}
+        else if (choice == "5"){}
+        else if (choice == "6"){ }
+        
+        
+
+    
+}
