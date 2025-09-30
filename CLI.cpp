@@ -30,9 +30,9 @@ void ClubRequests(Student *currentStudent);
 
 void MyClubs(Student *currentStudent);
 
-// void AdminInterface(Admin *Admin);
-
 void ClubSelected(Student *currentStudent, Club *selectedClub);
+
+void viewNotifications(Admin *admin);
 
 int main()
 {
@@ -189,17 +189,18 @@ void Signup()
         std::cin >> enrollment;
         cout << "Enter Password: ";
         std::cin >> password;
-        for (int i = 0; i < students.size(); i++)
-        {
-            if (students[i]->login(enrollment, password))
-            {
-                cout << "Login Successful!" << endl;
-                HomePage(students[i]);
-                return;
+        bool loggedIn = false;
+       for (int i = 0; i < students.size(); i++) {
+                if (students[i]->login(enrollment, password)) {
+                    cout << "Login Successful!" << endl;
+                    HomePage(students[i]);
+                    loggedIn = true;
+                    break;
+                }
             }
-        }
-        cout << "Login Failed!" << endl;
-        Signup();
+            if (!loggedIn) {
+                cout << "Login Failed! Try again." << endl;
+            }
         return;
     }
     else if (choice == 2)
@@ -210,7 +211,7 @@ void Signup()
             int enrollment, gradYear;
             float cgpa;
             cout << "Enter Name: ";
-            std::cin >> name;
+            cin >> name;
             cout << "Enter Enrollment Number: ";
             std::cin >> enrollment;
             cout << "Enter Mail: ";
@@ -474,8 +475,75 @@ void ClubRequests(Student *currentStudent)
     return;
 }
 
-void SelectedClubInterface(Student *currentStudent, Club *club);
-void ClubSelected(Student *currentStudent, Club *selectedClub);
+void viewNotifications(Admin *admin)
+{
+    Vector<string> notes = admin->getNotifications();
+    if (notes.empty())
+    {
+        cout << "No notifications." << endl;
+    }
+    else
+    {
+        cout << "Notifications:" << endl;
+        for (int i = 0; i < notes.size(); ++i)
+        {
+            cout << i + 1 << ". " << notes[i] << endl;
+        }
+    }
+    cout << "Options:\n";
+    cout << "1. Delete all notifications\n";
+    cout << "2. Delete particular notifications\n";
+    cout << "3. Return\n";
+    cout << "Enter your choice: ";
+    int notifChoice;
+    std::cin >> notifChoice;
+    if (notifChoice == 1)
+    {
+        admin->removeallnotifications();
+        cout << "All notifications deleted." << endl;
+        return;
+    }
+    else if (notifChoice == 2)
+    {
+        cout << "Enter the notification numbers to delete separated by spaces (end with 0): ";
+        Vector<int> delIndices;
+        int delIndex;
+        while (std::cin >> delIndex && delIndex != 0)
+        {
+            if (delIndex > 0 && delIndex <= notes.size())
+            {
+                delIndices.push_back(delIndex - 1);
+            }
+            else
+            {
+                cout << "Invalid notification number: " << delIndex << endl;
+            }
+        }
+        std::cin.clear();
+        for (int i = delIndices.size() - 1; i >= 0; --i)
+        {
+            int idx = delIndices[i];
+            if (idx >= 0 && idx < notes.size())
+            {
+                admin->removeNotification(notes[idx]);
+            }
+        }
+        if (!delIndices.empty())
+            cout << "Selected notifications deleted." << endl;
+        else
+            cout << "No valid notifications selected for deletion." << endl;
+        return;
+    }
+    else if (notifChoice == 3)
+    {
+        return;
+    }
+    else
+    {
+        cout << "Invalid choice!" << endl;
+        return;
+    }
+}
 
 void MyClubs(Student *currentStudent)
 {
@@ -740,73 +808,4 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
     }
 }
 
-// Admin Functionality
-void viewNotifications(Admin *admin)
-{
-    Vector<string> notes = admin->getNotifications();
-    if (notes.empty())
-    {
-        cout << "No notifications." << endl;
-    }
-    else
-    {
-        cout << "Notifications:" << endl;
-        for (int i = 0; i < notes.size(); ++i)
-        {
-            cout << i + 1 << ". " << notes[i] << endl;
-        }
-    }
-    cout << "Options:\n";
-    cout << "1. Delete all notifications\n";
-    cout << "2. Delete particular notifications\n";
-    cout << "3. Return\n";
-    cout << "Enter your choice: ";
-    int notifChoice;
-    std::cin >> notifChoice;
-    if (notifChoice == 1)
-    {
-        admin->removeallnotifications();
-        cout << "All notifications deleted." << endl;
-        return;
-    }
-    else if (notifChoice == 2)
-    {
-        cout << "Enter the notification numbers to delete separated by spaces (end with 0): ";
-        Vector<int> delIndices;
-        int delIndex;
-        while (std::cin >> delIndex && delIndex != 0)
-        {
-            if (delIndex > 0 && delIndex <= notes.size())
-            {
-                delIndices.push_back(delIndex - 1);
-            }
-            else
-            {
-                cout << "Invalid notification number: " << delIndex << endl;
-            }
-        }
-        std::cin.clear();
-        for (int i = delIndices.size() - 1; i >= 0; --i)
-        {
-            int idx = delIndices[i];
-            if (idx >= 0 && idx < notes.size())
-            {
-                admin->removeNotification(notes[idx]);
-            }
-        }
-        if (!delIndices.empty())
-            cout << "Selected notifications deleted." << endl;
-        else
-            cout << "No valid notifications selected for deletion." << endl;
-        return;
-    }
-    else if (notifChoice == 3)
-    {
-        return;
-    }
-    else
-    {
-        cout << "Invalid choice!" << endl;
-        return;
-    }
-}
+
