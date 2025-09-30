@@ -65,8 +65,6 @@ int main(){
     return 0;
 }
 
-
-
 void Signup(){ 
     int choice;
     cout<< "\nWelcome to the Student Club Management System!" << endl;
@@ -85,9 +83,9 @@ void Signup(){
         int enrollment;
         string password;
         cout << "Enter Enrollment Number: ";
-        cin >> enrollment;
+        std::cin >> enrollment;
         cout << "Enter Password: ";
-        cin >> password;
+        std::cin >> password;
         for(int i = 0; i < students.size(); i++){
             if(students[i]->login(enrollment, password)){
                 cout << "Login Successful!" << endl;
@@ -104,17 +102,17 @@ void Signup(){
             int enrollment, gradYear;
             float cgpa;
             cout << "Enter Name: ";
-            cin >> name;
+            std::cin >> name;
             cout << "Enter Enrollment Number: ";
-            cin >> enrollment;
+            std::cin >> enrollment;
             cout << "Enter Mail: ";
-            cin >> mail;
+            std::cin >> mail;
             cout << "Enter Graduation Year: ";
-            cin >> gradYear;
+            std::cin >> gradYear;
             cout << "Enter CGPA: ";
-            cin >> cgpa;
+            std::cin >> cgpa;
             cout << "Enter Password: ";
-            cin >> password;
+            std::cin >> password;
             Student* newStudent = new Student(name, enrollment, mail, gradYear, cgpa, password);
             students.push_back(newStudent);
             cout << "Registration Successful!" << endl;
@@ -150,19 +148,19 @@ void displayInfo(Student* currentStudent){
         cout << "None" << endl;
     }
     cout<<"ReEnter New Information?:(y to update / n to return to main menu)"<<endl;
-    char ch; cin>>ch;
+    char ch; std::cin>>ch;
     if(ch=='y'){
         string name, mail, password;
         int  gradYear;
         float cgpa;
         cout << "Enter Name: ";
-        cin >> name;
+        std::cin >> name;
         cout << "Enter Mail: ";
-        cin >> mail;
+        std::cin >> mail;
         cout << "Enter Graduation Year: ";
-        cin >> gradYear;
+        std::cin >> gradYear;
         cout << "Enter CGPA: ";
-        cin >> cgpa;
+        std::cin >> cgpa;
         currentStudent->setCGPA(cgpa);
         currentStudent->setName(name);
         currentStudent->setMail(mail);
@@ -184,8 +182,8 @@ void HomePage(Student* currentStudent ){
     cout << "6. Logout" << endl;
     cout<< "----------------------------"<<endl;
     cout << "Enter your choice: ";
-    cin >> choice;
-    cin.ignore();
+    std::cin >> choice;
+    std::cin.ignore();
     cout<< "----------------------------\n"<<endl;
     switch(choice){
         case 1:
@@ -226,7 +224,7 @@ void SearchStudent(Student* currentStudent){
     }
     int enrollment;
     cout << "Main menu: 0 \n All Students -1 \n Enter Enrollment Number to search/choice: ";
-    cin >> enrollment;
+    std::cin >> enrollment;
     if(enrollment == 0) return;
     if(enrollment == -1){
         cout << "All Students: " << endl;
@@ -257,7 +255,7 @@ void ClubInfo(Student* currentStudent){
     }
     int clubId;
     cout << "Main menu: 0 \n All Clubs -1 \n Enter Club ID to search/choice: ";
-    cin >> clubId;
+    std::cin >> clubId;
     if(clubId == 0) return;
     if(clubId == -1){
         cout << "All Clubs: " << endl;
@@ -266,7 +264,7 @@ void ClubInfo(Student* currentStudent){
         }
         int select = -1;
         cout << "Enter the club number to view details or 0 to return: ";
-        cin >> select;
+        std::cin >> select;
         if(select == 0) return;
         if(select < 1 || select > clubs.size()){
             cout << "Invalid choice!" << endl;
@@ -303,7 +301,7 @@ void ClubRequests(Student* currentStudent){
     }
     int choice;
     cout << "Enter the club number to process or 0 to return: ";
-    cin >> choice;
+    std::cin >> choice;
     if (choice == 0) return;
     if (choice < 1 || choice > requests.size()) {
         cout << "Invalid choice!" << endl;
@@ -311,7 +309,7 @@ void ClubRequests(Student* currentStudent){
     }
     cout << "1. Join Club\n2. Discard Request\nEnter your option: ";
     int action;
-    cin >> action;
+    std::cin >> action;
     if (action == 1) {
         currentStudent->AddClub(requests[choice - 1]);
         requests[choice - 1]->getAdmin()->setNotifications(currentStudent->getName() + " has joined the club " + requests[choice - 1]->getName() + "."); //notify the admin here
@@ -330,6 +328,7 @@ void ClubRequests(Student* currentStudent){
 }
 
 void SelectedClubInterface(Student* currentStudent, Club* club);
+void ClubSelected(Student* currentStudent, Club* selectedClub);
 
 void MyClubs(Student* currentStudent){
      Vector<Club*> studentClubs = currentStudent->ViewClubs(false);
@@ -343,7 +342,7 @@ void MyClubs(Student* currentStudent){
     }
     int choice;
     cout << "Enter the club number to view details or 0 to return: ";
-    cin >> choice;
+    std::cin >> choice;
     if(choice == 0) return;
     if(choice < 1 || choice > studentClubs.size()){
         cout << "Invalid choice!" << endl;
@@ -388,13 +387,12 @@ void ClubSelected(Student* currentStudent, Club* selectedClub){
             cout << "   c) Delete Assignment   (8c)\n";
             cout << "   d) View Submissions    (8d)\n";
         }else{
-            cout << "===== Admin Tools =====\n";
             cout << "7.Leave Club\n";
             cout<<"the only admin power you have is to leave the club hahaha"<<endl;
         }
         cout << "Enter choice: ";
-        cin >> choice;
-        cin.ignore();
+        std::cin >> choice;
+        std::cin.ignore();
         if (choice == "1") {
             selectedClub->getMembers();
             for(int i=0;i<selectedClub->getMembers().size();i++){
@@ -402,7 +400,7 @@ void ClubSelected(Student* currentStudent, Club* selectedClub){
             }
             int choice;
             cout << "Enter the member number to view details or 0 to return: ";
-            cin >> choice;
+            std::cin >> choice;
             if(choice == 0) {ClubSelected(currentStudent, selectedClub);
                 return;}
             if(choice < 1 || choice > selectedClub->getMembers().size()){
@@ -466,6 +464,7 @@ void ClubSelected(Student* currentStudent, Club* selectedClub){
             ClubSelected(currentStudent, selectedClub);
             return;
         }
+}
 void SelectedClubInterface(Student* currentStudent, Club* club){
     if (currentStudent == nullptr) {
         cout << "No student logged in!" << endl;
@@ -552,155 +551,155 @@ void SelectedClubInterface(Student* currentStudent, Club* club){
     // You can add more club-specific actions here if needed
 }
 
-void AdminInterface(Admin* admin){
-    if (admin == nullptr) {
-        cout << "No admin logged in!" << endl;
-        return;
-    }
-    Club* club = admin->getClub();
-    if (club == nullptr) {
-        cout << "No club assigned to this admin!" << endl;
-        return;
-    }
-    int choice;
-    do {
-        cout << "\n--- Admin Interface for " << club->getName() << " ---" << endl;
-        cout << "1. View Notifications" << endl;
-        cout << "2. View Members" << endl;
-        cout << "3. Add Member" << endl;
-        cout << "4. Remove Member" << endl;
-        cout << "5. Assign Admin" << endl;
-        cout << "6. Assignment Stuff" << endl;
-        cout << "7. Exit Admin Interface" << endl;
-        cout << "----------------------------" << endl;
-        cout << "Enter your choice: ";
-        cin >> choice;
-        cin.ignore();
-        switch (choice) {
-            case 1: { // View Notifications
-                Vector<string> notes = admin->getNotifications();
-                if (notes.empty()) {
-                    cout << "No notifications." << endl;
-                } else {
-                    cout << "Notifications:" << endl;
-                    for (int i = 0; i < notes.size(); ++i) {
-                        cout << i + 1 << ". " << notes[i] << endl;
-                    }
-                }
-                cout << "Do you want to delete all notifications? (y/n): ";
-                char delAllChoice;
-                cin >> delAllChoice;
-                if (delAllChoice == 'y') {
-                    admin->removeallnotifications();
-                    cout << "All notifications deleted." << endl;
-                }
-                cout << "Do you want to delete any particular notification? (y/n): ";
-                char delChoice;
-                cin >> delChoice;
-                if (delChoice == 'y') {
-                    cout << "Enter the notification numbers to delete separated by spaces (end with 0): ";
-                    Vector<int> delIndices;
-                    int delIndex;
-                    while (cin >> delIndex && delIndex != 0) {
-                        if (delIndex > 0 && delIndex <= notes.size()) {
-                            delIndices.push_back(delIndex - 1);
-                        } else {
-                            cout << "Invalid notification number: " << delIndex << endl;
-                        }
-                    }
-                    cin.clear(); // Clear the fail state
-                    for (int i = delIndices.size() - 1; i >= 0; --i) {
-                        int idx = delIndices[i];
-                        if (idx >= 0 && idx < notes.size()) {
-                            admin->removeNotification(notes[idx]);
-                        }
-                    }
-                    if (!delIndices.empty())
-                        cout << "Selected notifications deleted." << endl;
-                    else
-                        cout << "No valid notifications selected for deletion." << endl;
-                }
-                break;
-            }
-            case 2: { // View Members
-                Vector<Student*> members = club->getMembers();
-                if (members.empty()) {
-                    cout << "No members in this club." << endl;
-                } else {
-                    cout << "Club Members:" << endl;
-                    for (int i = 0; i < members.size(); ++i) {
-                        cout << i + 1 << ". " << members[i]->getName() << " (Enrollment: " << members[i]->getEnrollment() << ")" << endl;
-                    }
-                }
-                break;
-            }
-            case 3: { // Add Member
-                cout<<"Enter Enrollment of student to add: ";
-                int enroll; 
-                cin>>enroll;
-                bool found = false;
-                for(int i = 0; i < students.size(); i++){
-                    if(students[i]->getEnrollment() == enroll){
-                        admin->addMember(students[i]);
-                       found = true;
-                       break;
-                    }
-                }
-                if (found) {
-                    // Member added successfully
-                    cout << "Student will be added automatically when he accepts the invitation." << endl;
-                } else {
-                    cout << "Student not found." << endl;
-                }
-                break;
-            }
-            case 4: { // Remove Member
-                cout<<"Enter Enrollment of student to remove: ";
-                int enroll;
-                cin>>enroll;
-                admin->removeMember(enroll);
-                cout << "Student is removed from the Club." << endl;
-                break;
-            }
-            case 5: { // Assign Admin
-                cout<<"Enter Enrollment of student to assign as new Admin: ";
-                int enroll;
-                cin>>enroll;
-                cout<<"Enter joining date (YYYY-MM-DD): ";
-                string date;
-                cin>>date;
-                bool found = false;
-                if(enroll == admin->getStudent()->getEnrollment()){
-                    cout << "You are already the admin." << endl;
-                    break;
-                }
-                Admin* newAdmin = nullptr;
-                for(int i = 0; i < students.size(); i++){
-                    if(students[i]->getEnrollment() == enroll){
-                        newAdmin = new Admin(students[i], date);
-                        admin->setNewAdmin(newAdmin);
-                        found = true;
-                        cout << students[i]->getName() << " is now the new admin of the club." << endl;
-                        break;
-                    }
-                }
-                if (!found) {
-                        cout << "No student found with enrollment " << enroll << endl;
-                }
-                break;
-            }
-            case 6: { // Assignment Stuff
-                cout << "Yet to implement Assignment functionalities." << endl;
-                break;
-            }
-            case 7:
-                cout << "Exiting Admin Interface..." << endl;
-                break;
-            default:
-                cout << "Invalid choice!" << endl;
-        }
-    } while (choice != 6);
-}
+// void AdminInterface(Admin* admin){
+//     if (admin == nullptr) {
+//         cout << "No admin logged in!" << endl;
+//         return;
+//     }
+//     Club* club = admin->getClub();
+//     if (club == nullptr) {
+//         cout << "No club assigned to this admin!" << endl;
+//         return;
+//     }
+//     int choice;
+//     do {
+//         cout << "\n--- Admin Interface for " << club->getName() << " ---" << endl;
+//         cout << "1. View Notifications" << endl;
+//         cout << "2. View Members" << endl;
+//         cout << "3. Add Member" << endl;
+//         cout << "4. Remove Member" << endl;
+//         cout << "5. Assign Admin" << endl;
+//         cout << "6. Assignment Stuff" << endl;
+//         cout << "7. Exit Admin Interface" << endl;
+//         cout << "----------------------------" << endl;
+//         cout << "Enter your choice: ";
+//         std::cin >> choice;
+//         std::cin.ignore();
+//         switch (choice) {
+//             case 1: { // View Notifications
+//                 Vector<string> notes = admin->getNotifications();
+//                 if (notes.empty()) {
+//                     cout << "No notifications." << endl;
+//                 } else {
+//                     cout << "Notifications:" << endl;
+//                     for (int i = 0; i < notes.size(); ++i) {
+//                         cout << i + 1 << ". " << notes[i] << endl;
+//                     }
+//                 }
+//                 cout << "Do you want to delete all notifications? (y/n): ";
+//                 char delAllChoice;
+//                 std::cin >> delAllChoice;
+//                 if (delAllChoice == 'y') {
+//                     admin->removeallnotifications();
+//                     cout << "All notifications deleted." << endl;
+//                 }
+//                 cout << "Do you want to delete any particular notification? (y/n): ";
+//                 char delChoice;
+//                 std::cin >> delChoice;
+//                 if (delChoice == 'y') {
+//                     cout << "Enter the notification numbers to delete separated by spaces (end with 0): ";
+//                     Vector<int> delIndices;
+//                     int delIndex;
+//                     while (std::cin >> delIndex && delIndex != 0) {
+//                         if (delIndex > 0 && delIndex <= notes.size()) {
+//                             delIndices.push_back(delIndex - 1);
+//                         } else {
+//                             cout << "Invalid notification number: " << delIndex << endl;
+//                         }
+//                     }
+//                     std::cin.clear(); // Clear the fail state
+//                     for (int i = delIndices.size() - 1; i >= 0; --i) {
+//                         int idx = delIndices[i];
+//                         if (idx >= 0 && idx < notes.size()) {
+//                             admin->removeNotification(notes[idx]);
+//                         }
+//                     }
+//                     if (!delIndices.empty())
+//                         cout << "Selected notifications deleted." << endl;
+//                     else
+//                         cout << "No valid notifications selected for deletion." << endl;
+//                 }
+//                 break;
+//             }
+//             case 2: { // View Members
+//                 Vector<Student*> members = club->getMembers();
+//                 if (members.empty()) {
+//                     cout << "No members in this club." << endl;
+//                 } else {
+//                     cout << "Club Members:" << endl;
+//                     for (int i = 0; i < members.size(); ++i) {
+//                         cout << i + 1 << ". " << members[i]->getName() << " (Enrollment: " << members[i]->getEnrollment() << ")" << endl;
+//                     }
+//                 }
+//                 break;
+//             }
+//             case 3: { // Add Member
+//                 cout<<"Enter Enrollment of student to add: ";
+//                 int enroll; 
+//                 std::cin>>enroll;
+//                 bool found = false;
+//                 for(int i = 0; i < students.size(); i++){
+//                     if(students[i]->getEnrollment() == enroll){
+//                         admin->addMember(students[i]);
+//                        found = true;
+//                        break;
+//                     }
+//                 }
+//                 if (found) {
+//                     // Member added successfully
+//                     cout << "Student will be added automatically when he accepts the invitation." << endl;
+//                 } else {
+//                     cout << "Student not found." << endl;
+//                 }
+//                 break;
+//             }
+//             case 4: { // Remove Member
+//                 cout<<"Enter Enrollment of student to remove: ";
+//                 int enroll;
+//                 std::cin>>enroll;
+//                 admin->removeMember(enroll);
+//                 cout << "Student is removed from the Club." << endl;
+//                 break;
+//             }
+//             case 5: { // Assign Admin
+//                 cout<<"Enter Enrollment of student to assign as new Admin: ";
+//                 int enroll;
+//                 std::cin>>enroll;
+//                 cout<<"Enter joining date (YYYY-MM-DD): ";
+//                 string date;
+//                 std::cin>>date;
+//                 bool found = false;
+//                 if(enroll == admin->getStudent()->getEnrollment()){
+//                     cout << "You are already the admin." << endl;
+//                     break;
+//                 }
+//                 Admin* newAdmin = nullptr;
+//                 for(int i = 0; i < students.size(); i++){
+//                     if(students[i]->getEnrollment() == enroll){
+//                         newAdmin = new Admin(students[i], date);
+//                         admin->setNewAdmin(newAdmin);
+//                         found = true;
+//                         cout << students[i]->getName() << " is now the new admin of the club." << endl;
+//                         break;
+//                     }
+//                 }
+//                 if (!found) {
+//                         cout << "No student found with enrollment " << enroll << endl;
+//                 }
+//                 break;
+//             }
+//             case 6: { // Assignment Stuff
+//                 cout << "Yet to implement Assignment functionalities." << endl;
+//                 break;
+//             }
+//             case 7:
+//                 cout << "Exiting Admin Interface..." << endl;
+//                 break;
+//             default:
+//                 cout << "Invalid choice!" << endl;
+//         }
+//     } while (choice != 6);
+// }
 
 
 
