@@ -355,7 +355,7 @@ void ClubSelected(Student* currentStudent, Club* selectedClub){
         cout << "3. View Assignments\n";
         cout << "4. My Assignments\n";
         cout << "5. My Submissions\n";
-        cout << "6. Back to Clubs\n";
+        cout << "6. Back to Main Menu\n";
 
         if (selectedClub->getAdmin()->getStudent()->getEnrollment() == currentStudent->getEnrollment()) {
             cout << "===== Admin Tools =====\n";
@@ -364,6 +364,7 @@ void ClubSelected(Student* currentStudent, Club* selectedClub){
             cout << "   b) Add Member          (7b)\n";
             cout << "   c) Remove Member       (7c)\n";
             cout << "   d) Assign Admin        (7d)\n";
+            cout << "   e) Leave Club           (7e)\n";
             cout << "8. Manage Assignments\n";
             cout << "   a) Create Assignment   (8a)\n";
             cout << "   b) Edit Assignment     (8b)\n";
@@ -378,14 +379,74 @@ void ClubSelected(Student* currentStudent, Club* selectedClub){
         cin >> choice;
         cin.ignore();
         if (choice == "1") {
-        }
-        else if (choice =="2"){}
-        else if (choice == "3"){}
-        else if (choice == "4"){}
-        else if (choice == "5"){}
-        else if (choice == "6"){ }
-        
-        
+            selectedClub->getMembers();
+            for(int i=0;i<selectedClub->getMembers().size();i++){
+                cout<<i+1<<". "<<selectedClub->getMembers()[i]->getName()<<" (ID: "<<selectedClub->getMembers()[i]->getEnrollment()<<")"<<endl;
+            }
+            int choice;
+            cout << "Enter the member number to view details or 0 to return: ";
+            cin >> choice;
+            if(choice == 0) {ClubSelected(currentStudent, selectedClub);
+                return;}
+            if(choice < 1 || choice > selectedClub->getMembers().size()){
+                cout << "Invalid choice!" << endl;
+                ClubSelected(currentStudent, selectedClub);
+                return;
+            }
+            Student* member = selectedClub->getMembers()[choice-1];
+            cout << "Member Details:" << endl;  
+            
+            cout << "Name: " << member->getName() << endl;
+            cout<< "Admin: "<< (member->getEnrollment() == selectedClub->getAdmin()->getStudent()->getEnrollment() ? "Yes" : "No") << endl;
+            cout << "Enrollment Number: " << member->getEnrollment() << endl;
+            cout << "Mail: " << member->getMail() << endl;
+            cout << "Graduation Year: " << member->getGraduationYear() << endl;
+            cout << "CGPA: " << member->getCGPA() << endl;
+            ClubSelected(currentStudent, selectedClub);
+            return;
 
-    
+        }
+        else if (choice =="2"){
+            Admin* admin = selectedClub->getAdmin();
+            if(admin == nullptr){
+                cout << "No admin assigned!" << endl;
+                ClubSelected(currentStudent, selectedClub);
+                return;
+            }
+            Student* adminStudent = admin->getStudent();
+            cout << "Admin Details:" << endl;
+            cout << "Name: " << adminStudent->getName() << endl;
+            cout << "Enrollment Number: " << adminStudent->getEnrollment() << endl;
+            cout << "Mail: " << adminStudent->getMail() << endl;
+            cout << "Graduation Year: " << adminStudent->getGraduationYear() << endl;
+            cout << "CGPA: " << adminStudent->getCGPA() << endl;
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        else if (choice == "3"){
+            selectedClub->listAssignments();
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        else if (choice == "4"){
+            //work here is left
+        }
+        else if (choice == "5"){}
+        else if (choice == "6"){ 
+            return;
+        }
+        else if (choice == "7a"){}
+        else if (choice == "7b"){}
+        else if (choice == "7c"){}
+        else if (choice == "7d"){}
+        else if (choice == "7e"){}
+        else if (choice == "8a"){}
+        else if (choice == "8b"){}
+        else if (choice == "8c"){}
+        else if (choice == "8d"){}
+        else {
+            cout << "Invalid choice! Please try again." << endl;
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
 }

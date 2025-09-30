@@ -18,7 +18,7 @@ private:
     bool late;                         // Whether the submission is late
     Vector<string> submittedFiles; // List of submitted files with namd like dd-mm-yy_iteration_filename
     string review;                 // Review comments
-    int score;                     // Score / grade
+    double score;                     // Score / grade
 
 public:
     // Constructor

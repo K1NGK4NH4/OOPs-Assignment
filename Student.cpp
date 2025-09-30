@@ -66,14 +66,10 @@ Vector<Club*> Student::ViewClubs(bool display) const {
 
 // Submit assignment
 void Student::submitAssignment(Submission* s) {
-   Assignment* hw =  s->getAssignment();
 }
 
 // Get assignment (just prints club name for now)
-Vector<Assignment*> Student::getAssignment(Club* c) const {
-    cout << "Assignments for club: " << c->getName()<< endl;
-    return c->getAssignments();
-}
+
 
 // Getters
 string Student::getName() const {
