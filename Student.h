@@ -36,10 +36,9 @@ public:
     void removeClubRequest(Club* c);
     void AddClub(Club* c);
     bool leaveClub(Club* c);
-    Vector<Club*> ViewClubs() const;
+    Vector<Club*> ViewClubs(bool display=true) const;
 
     void submitAssignment(Submission* s);
-    Vector<Assignment*> getAssignment(Club* c) const;
     //setters
     void setName(const string& n) { name = n; }
     void setMail(const string& m) { mail = m; }

@@ -112,6 +112,7 @@ void Club::listAssignments() const {
     }
     for (int i = 0; i < assignments.size(); ++i) {
         assignments[i]->details();
+        cout << endl;
     }
 }
 

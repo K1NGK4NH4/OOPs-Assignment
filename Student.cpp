@@ -58,10 +58,15 @@ bool Student::leaveClub(Club* c) {
 }
 
 // View clubs
-Vector<Club*> Student::ViewClubs() const {
+Vector<Club*> Student::ViewClubs(bool display) const {
+    if(display)  
+        {
+        std::cout << "Clubs Joined: ";
     for (size_t i = 0; i < Clubs.size(); i++)
-    {
-        std::cout << Clubs[i]->getName() << ", ";
+        {
+           
+            std::cout << Clubs[i]->getName() << ", ";
+        }
     }
     std::cout << std::endl;
     return Clubs;
@@ -69,14 +74,10 @@ Vector<Club*> Student::ViewClubs() const {
 
 // Submit assignment
 void Student::submitAssignment(Submission* s) {
-   Assignment* hw =  s->getAssignment();
 }
 
 // Get assignment (just prints club name for now)
-Vector<Assignment*> Student::getAssignment(Club* c) const {
-    cout << "Assignments for club: " << c->getName()<< endl;
-    return c->getAssignments();
-}
+
 
 // Getters
 string Student::getName() const {
