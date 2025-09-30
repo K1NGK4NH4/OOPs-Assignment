@@ -32,7 +32,8 @@ public:
     Student(Student* other);
     // Methods
     bool login(int Enrollment,string password);
-    void accessJoinClub(Club* c);
+    void addClubRequest(Club* c);
+    void removeClubRequest(Club* c);
     void AddClub(Club* c);
     bool leaveClub(Club* c);
     Vector<Club*> ViewClubs() const;
@@ -56,6 +57,10 @@ public:
         if(clubRequest.empty()) return Vector<Club*>(); ;
         return clubRequest;
     }
+
+    // bool clubRequestFlag (Club* c,bool flag);
+    // bool clubRequestFlag (Club* c);
+
     virtual ~Student() {}
 
 };
@@ -66,6 +71,7 @@ class Admin  {
     Club* club;
     Student* student;
     string joiningDate;
+    Vector<string> notifications; // Notifications for Admin
 public:
     Admin(Student* s ,string join );
 
@@ -82,6 +88,11 @@ public:
     Club* getClub() const;
     string getJoiningDate() const;
     Student* getStudent() const { return student; }
+
+    void setNotifications(const string& note) { notifications.push_back(note); }
+    void removeNotification(const string& note);
+    void removeallnotifications();
+    Vector<string> getNotifications() const;
 };
 
 

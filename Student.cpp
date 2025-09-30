@@ -24,7 +24,7 @@ bool Student::login(int enroll,string pass) {
 }
 
 // Join a club
-void Student::accessJoinClub(Club* c) {
+void Student::addClubRequest(Club* c) {
     // Access admin from club
     // Check if already invited
     for (int i = 0; i < clubRequest.size(); ++i) {
@@ -32,6 +32,15 @@ void Student::accessJoinClub(Club* c) {
     }
     clubRequest.push_back(c);
 }
+void Student::removeClubRequest(Club* c) {
+    for (int i = 0; i < clubRequest.size(); ++i) {
+        if (clubRequest[i] == c) {
+            clubRequest.pop(clubRequest[i]);
+            break;
+        }
+    }
+}
+
 // Add a club
 void Student::AddClub(Club* c){
     // Check if already a member
@@ -57,7 +66,6 @@ Vector<Club*> Student::ViewClubs() const {
     std::cout << std::endl;
     return Clubs;
 }
-
 
 // Submit assignment
 void Student::submitAssignment(Submission* s) {
@@ -86,7 +94,7 @@ int Student::getGraduationYear() const {
 float Student::getCGPA() const {
      return cgpa; 
 }
-
+// Check and update club request status
 
 
 
@@ -95,7 +103,7 @@ Admin::Admin(Student* s, string join )
 
 // Add member
 void Admin::addMember(Student* s){
-       s->accessJoinClub(club);
+       s->addClubRequest(club);
 }
 
 // Remove member
@@ -126,3 +134,22 @@ void Admin::setClub(Club* c) {
  }
 string Admin :: getJoiningDate() const {
          return joiningDate; }
+
+// Get notifications for club requests
+Vector<string> Admin::getNotifications() const {
+    return notifications;
+}
+void Admin::setNotifications(const string& note) { 
+    notifications.push_back(note); 
+}
+void Admin::removeNotification(const string& note) {
+    for (int i = 0; i < notifications.size(); ++i) {
+        if (notifications[i] == note) {
+            notifications.pop(notifications[i]);
+            break;
+        }
+    }
+}
+void Admin::removeallnotifications() {
+    notifications.clear();
+}

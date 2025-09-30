@@ -51,7 +51,6 @@ void Club::setMail(const string& m) {
 }
 
 void Club::setAdmin(Admin* a) {
-    
     if (a) {
         a->setClub(this);
         admin = a;

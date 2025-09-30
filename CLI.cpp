@@ -35,6 +35,8 @@ void ClubRequests(Student* currentStudent);
 
 void MyClubs(Student* currentStudent);
 
+void AdminInterface(Admin* Admin);
+
 
 int main(){
     Student* s1 = new Student("John Doe", 123456, "johndoe@example.com", 2022, 3.5, "123");
@@ -54,7 +56,7 @@ int main(){
     admins.push_back(a1);
     admins.push_back(a2);
     // Test: Student s2 requests to join Club c1
-    s2->accessJoinClub(c1);
+    s2->addClubRequest(c1);
 
     cout<<"Starting Application..."<<endl;
     Signup();
@@ -299,20 +301,298 @@ void ClubRequests(Student* currentStudent){
         cout << i+1 << ". " << requests[i]->getName() << " (Club ID: " << requests[i]->getClubId() << ")" << endl;
     }
     int choice;
-    cout << "Enter the club number to join or 0 to return: ";
+    cout << "Enter the club number to process or 0 to return: ";
     cin >> choice;
-    if(choice == 0) return;
-    if(choice < 1 || choice > requests.size()){
+    if (choice == 0) return;
+    if (choice < 1 || choice > requests.size()) {
         cout << "Invalid choice!" << endl;
         return;
     }
-    currentStudent->AddClub(requests[choice-1]);
-    cout << "Joined club successfully!" << endl;
+    cout << "1. Join Club\n2. Discard Request\nEnter your option: ";
+    int action;
+    cin >> action;
+    if (action == 1) {
+        currentStudent->AddClub(requests[choice - 1]);
+        requests[choice - 1]->getAdmin()->setNotifications(currentStudent->getName() + " has joined the club " + requests[choice - 1]->getName() + "."); //notify the admin here
+        requests[choice - 1]->addMember(currentStudent);
+        cout << "Joined club successfully!" << endl;
+        currentStudent->removeClubRequest(requests[choice - 1]);   
+    } else if (action == 2) {
+        // Remove the request from the student's clubRequest vector
+        currentStudent->removeClubRequest(requests[choice - 1]);
+        requests[choice - 1]->getAdmin()->setNotifications(currentStudent->getName() + "'s request to join the club " + requests[choice - 1]->getName() + " has been discarded."); //notify the admin here
+        cout << "Request discarded." << endl;
+    } else {
+        cout << "Invalid option!" << endl;
+    }
     return;
 }
 
+void SelectedClubInterface(Student* currentStudent, Club* club);
+
 void MyClubs(Student* currentStudent){
+    if (currentStudent == nullptr) {
+        cout << "No student logged in!" << endl;
+        return;
+    }
+    Vector<Club*> myClubs = currentStudent->ViewClubs();
+    if (myClubs.empty()) {
+        cout << "You have not joined any clubs." << endl;
+        return;
+    }
+    cout << "Your Clubs:" << endl;
+    for (int i = 0; i < myClubs.size(); ++i) {
+        cout << i + 1 << ". " << myClubs[i]->getName() << " (Club ID: " << myClubs[i]->getClubId() << ")" << endl;
+    }
+    cout << "Enter the club number to enter or 0 to return: ";
+    int choice;
+    cin >> choice;
+    if (choice == 0) return;
+    if (choice < 1 || choice > myClubs.size()) {
+        cout << "Invalid choice!" << endl;
+        return;
+    }
+    // Enter the selected club (could display club info or provide club menu)
+    Club* selectedClub = myClubs[choice - 1];
+    cout << "You have entered " << selectedClub->getName() << "." << endl;
+    SelectedClubInterface(currentStudent, selectedClub);
+    // You can add more club-specific actions here if needed
 }
 
 
+void SelectedClubInterface(Student* currentStudent, Club* club){
+    if (currentStudent == nullptr) {
+        cout << "No student logged in!" << endl;
+        return;
+    }
+    if (club == nullptr) {
+        cout << "No club selected!" << endl;
+        return;
+    }
+    cout << "Welcome to the " << club->getName() << " club interface." << endl;
+    int choice;
+    do {
+        cout << "\n--- " << club->getName() << " Club Menu ---" << endl;
+        cout << "1. View Members" << endl;
+        cout << "2. View Admin" << endl;
+        cout << "3. View Assignments" << endl;
+        cout << "4. My Submissions" << endl;
+        cout << "5. My Assignments" << endl;
+        cout << "6. Admin Work" << endl;
+        cout << "7. Return to Main Menu" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+        switch (choice) {
+            case 1: { // View Members
+                Vector<Student*> members = club->getMembers();
+                if (members.empty()) {
+                    cout << "No members in this club." << endl;
+                } else {
+                    cout << "Club Members:" << endl;
+                    for (int i = 0; i < members.size(); ++i) {
+                        cout << i + 1 << ". " << members[i]->getName() << " (Enrollment: " << members[i]->getEnrollment() << ")" << endl;
+                    }
+                }
+                break;
+            }
+            case 2: { // View Admin
+                Admin* admin = club->getAdmin();
+                if (admin) {
+                    Student* adminStudent = admin->getStudent();
+                    cout << "Admin: " << adminStudent->getName() << " (Enrollment: " << adminStudent->getEnrollment() << ")" << endl;
+                } else {
+                    cout << "No admin assigned to this club." << endl;
+                }
+                break;
+            }
+            case 3: { // View Assignments
+                Vector<Assignment*> clubAssignments = club->getAssignments();
+                if (clubAssignments.empty()) {
+                    cout << "No assignments for this club." << endl;
+                } else {
+                    cout << "Assignments:" << endl;
+                    for (int i = 0; i < clubAssignments.size(); ++i) {
+                        cout << i + 1 << ". " << clubAssignments[i]->getTitle() << endl;
+                    }
+                }
+                break;
+            }
+            case 4: { // My Submissions
+                //Display Submissions 
+                cout << "Yet to implement" << endl;
+            }
+            case 5: { // My Assignments
+                //Yet to implement
+                cout << "Yet to implement" << endl;
+            }
+            case 6: { // Admin Work
+                Admin* admin = club->getAdmin();
+                if (admin && admin->getStudent() == currentStudent) {
+                    AdminInterface(admin);
+                } else {
+                    cout << "Access denied: You are not the admin of this club." << endl;
+                }
+                break;
+            }
+            case 7:
+                cout << "Returning to main menu..." << endl;
+                break;
+            default:
+                cout << "Invalid choice!" << endl;
+        }
+    } while (choice != 7);
+
+    // You can add more club-specific actions here if needed
+}
+
+void AdminInterface(Admin* admin){
+    if (admin == nullptr) {
+        cout << "No admin logged in!" << endl;
+        return;
+    }
+    Club* club = admin->getClub();
+    if (club == nullptr) {
+        cout << "No club assigned to this admin!" << endl;
+        return;
+    }
+    int choice;
+    do {
+        cout << "\n--- Admin Interface for " << club->getName() << " ---" << endl;
+        cout << "1. View Notifications" << endl;
+        cout << "2. View Members" << endl;
+        cout << "3. Add Member" << endl;
+        cout << "4. Remove Member" << endl;
+        cout << "5. Assign Admin" << endl;
+        cout << "6. Assignment Stuff" << endl;
+        cout << "7. Exit Admin Interface" << endl;
+        cout << "----------------------------" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+        switch (choice) {
+            case 1: { // View Notifications
+                Vector<string> notes = admin->getNotifications();
+                if (notes.empty()) {
+                    cout << "No notifications." << endl;
+                } else {
+                    cout << "Notifications:" << endl;
+                    for (int i = 0; i < notes.size(); ++i) {
+                        cout << i + 1 << ". " << notes[i] << endl;
+                    }
+                }
+                cout << "Do you want to delete all notifications? (y/n): ";
+                char delAllChoice;
+                cin >> delAllChoice;
+                if (delAllChoice == 'y') {
+                    admin->removeallnotifications();
+                    cout << "All notifications deleted." << endl;
+                }
+                cout << "Do you want to delete any particular notification? (y/n): ";
+                char delChoice;
+                cin >> delChoice;
+                if (delChoice == 'y') {
+                    cout << "Enter the notification numbers to delete separated by spaces (end with 0): ";
+                    Vector<int> delIndices;
+                    int delIndex;
+                    while (cin >> delIndex && delIndex != 0) {
+                        if (delIndex > 0 && delIndex <= notes.size()) {
+                            delIndices.push_back(delIndex - 1);
+                        } else {
+                            cout << "Invalid notification number: " << delIndex << endl;
+                        }
+                    }
+                    cin.clear(); // Clear the fail state
+                    for (int i = delIndices.size() - 1; i >= 0; --i) {
+                        int idx = delIndices[i];
+                        if (idx >= 0 && idx < notes.size()) {
+                            admin->removeNotification(notes[idx]);
+                        }
+                    }
+                    if (!delIndices.empty())
+                        cout << "Selected notifications deleted." << endl;
+                    else
+                        cout << "No valid notifications selected for deletion." << endl;
+                }
+                break;
+            }
+            case 2: { // View Members
+                Vector<Student*> members = club->getMembers();
+                if (members.empty()) {
+                    cout << "No members in this club." << endl;
+                } else {
+                    cout << "Club Members:" << endl;
+                    for (int i = 0; i < members.size(); ++i) {
+                        cout << i + 1 << ". " << members[i]->getName() << " (Enrollment: " << members[i]->getEnrollment() << ")" << endl;
+                    }
+                }
+                break;
+            }
+            case 3: { // Add Member
+                cout<<"Enter Enrollment of student to add: ";
+                int enroll; 
+                cin>>enroll;
+                bool found = false;
+                for(int i = 0; i < students.size(); i++){
+                    if(students[i]->getEnrollment() == enroll){
+                        admin->addMember(students[i]);
+                       found = true;
+                       break;
+                    }
+                }
+                if (found) {
+                    // Member added successfully
+                    cout << "Student will be added automatically when he accepts the invitation." << endl;
+                } else {
+                    cout << "Student not found." << endl;
+                }
+                break;
+            }
+            case 4: { // Remove Member
+                cout<<"Enter Enrollment of student to remove: ";
+                int enroll;
+                cin>>enroll;
+                admin->removeMember(enroll);
+                cout << "Student is removed from the Club." << endl;
+                break;
+            }
+            case 5: { // Assign Admin
+                cout<<"Enter Enrollment of student to assign as new Admin: ";
+                int enroll;
+                cin>>enroll;
+                cout<<"Enter joining date (YYYY-MM-DD): ";
+                string date;
+                cin>>date;
+                bool found = false;
+                if(enroll == admin->getStudent()->getEnrollment()){
+                    cout << "You are already the admin." << endl;
+                    break;
+                }
+                Admin* newAdmin = nullptr;
+                for(int i = 0; i < students.size(); i++){
+                    if(students[i]->getEnrollment() == enroll){
+                        newAdmin = new Admin(students[i], date);
+                        admin->setNewAdmin(newAdmin);
+                        found = true;
+                        cout << students[i]->getName() << " is now the new admin of the club." << endl;
+                        break;
+                    }
+                }
+                if (!found) {
+                        cout << "No student found with enrollment " << enroll << endl;
+                }
+                break;
+            }
+            case 6: { // Assignment Stuff
+                cout << "Yet to implement Assignment functionalities." << endl;
+                break;
+            }
+            case 7:
+                cout << "Exiting Admin Interface..." << endl;
+                break;
+            default:
+                cout << "Invalid choice!" << endl;
+        }
+    } while (choice != 6);
+}
 
