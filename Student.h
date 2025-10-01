@@ -58,8 +58,6 @@ public:
         return clubRequest;
     }
 
-    // bool clubRequestFlag (Club* c,bool flag);
-    // bool clubRequestFlag (Club* c);
 
     virtual ~Student() {}
 
