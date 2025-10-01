@@ -691,8 +691,8 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
             cout << i + 1 << ". " << assignments[i]->getTitle() << endl;
         }
         viewAssignmentDetails(selectedClub,currentStudent,assignments);
-        // ClubSelected(currentStudent, selectedClub);
-        // return;
+        ClubSelected(currentStudent, selectedClub);
+        return;
     }
     else if (choice == "4")
     {
@@ -816,10 +816,23 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
     else if (choice == "9a"){
-
+        string title, description, iteration;
+        cout << "Enter Assignment Title: ";
+        std::cin.ignore();
+        std::getline(std::cin, title);
+        cout << "Enter Assignment Description: ";
+        std::getline(std::cin, description);
+        cout << "Enter Assignment Iteration: ";
+        std::getline(std::cin, iteration);
+        Assignment* newAssignment = new Assignment(title, description, selectedClub->getAdmin(), iteration, selectedClub);
+        assignments.push_back(newAssignment);
+        selectedClub->addAssignment(newAssignment);
+        cout << "Assignment created successfully!" << endl;
+        ClubSelected(currentStudent, selectedClub);
+        return;
     }
-    else if (choice == "9b")
-    {
+    else if (choice == "9b"){
+        
     }
     else if (choice == "9c")
     {
@@ -841,13 +854,12 @@ void viewAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Ass
         int assignChoice;
         std::cin >> assignChoice;
         if (assignChoice == 0){
-            ClubSelected(currentStudent, selectedClub);
             return;
         }
         else{
              if (assignChoice < 1 || assignChoice > assignments.size()){
                 cout << "Invalid choice!" << endl;
-                ClubSelected(currentStudent, selectedClub);
+                viewAssignmentDetails(selectedClub,currentStudent,assignments);
                 return;
             }
             Assignment* selectedAssignment = assignments[assignChoice - 1];
@@ -862,13 +874,12 @@ void viewSubmissionDetails(Club* selectedClub,Student* currentStudent,Vector<Sub
         int submitChoice;
         std::cin >> submitChoice;
         if (submitChoice == 0){
-            ClubSelected(currentStudent, selectedClub);
             return;
         }
         else{
              if (submitChoice < 1 || submitChoice > submissions.size()){
                 cout << "Invalid choice!" << endl;
-                ClubSelected(currentStudent, selectedClub);
+                viewSubmissionDetails(selectedClub,currentStudent,submissions);
                 return;
             }
             Submission* selectedSubmission = submissions[submitChoice - 1];
@@ -923,6 +934,7 @@ void MyAssignments(Student *currentStudent, Club *selectedClub)
     }
     return;
 }
+
 void AssignmentSelected(Student* currentStudent, Assignment* selectedAssignment, Club* selectedClub){
     if (currentStudent == nullptr){
         cout << "No student logged in!" << endl;
@@ -955,7 +967,27 @@ void AssignmentSelected(Student* currentStudent, Assignment* selectedAssignment,
     }
     else if (choice == "2")
     {
-        cout<<"Assignment Status: "<<(selectedAssignment->isCompleted() ? "Completed" : "Not Completed")<<endl;
+        cout<<"Assignment Status: "<<(selectedAssignment->isCompleted() ? "Completed" : "Not Completed")<<endl;   
+        AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
+        return;
+    }
+    else if (choice == "3") {
+        Vector<Submission*> mySubmissions = currentStudent->getSubmissions();
+        Vector<Submission*> filteredSubmissions;
+        for(int i = 0; i < mySubmissions.size(); i++){
+            if(mySubmissions[i]->getAssignment()->getTitle() != selectedAssignment->getTitle()){
+                filteredSubmissions.push_back(mySubmissions[i]);
+            }
+        }
+        if (filteredSubmissions.empty()) {
+            cout << "No submissions found!" << endl;
+        } else {
+            cout << "My Submissions: " << endl;
+            for (int i = 0; i < filteredSubmissions.size(); i++) {
+                cout << i + 1 << ". " << filteredSubmissions[i]->getAssignment()->getTitle() << endl;
+            }
+        }
+        viewSubmissionDetails(selectedClub,currentStudent,filteredSubmissions);
         AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
         return;
     }
@@ -969,24 +1001,30 @@ void AssignmentSelected(Student* currentStudent, Assignment* selectedAssignment,
         char lateChoice;
         std::cin >> lateChoice;
         bool isLate = (lateChoice == 'y' || lateChoice == 'Y');
-        Submission* newSubmission = new Submission(currentStudent,selectedAssignment,isLate);
-        newSubmission->addFile(filename);
-        newSubmission->isLate(isLate);
-        cout<<"Submitting Assignment..."<<endl;
+        Submission* existing = nullptr;
+        Vector<Submission*> assnSubs = selectedAssignment->getSubmissions();
+        for (int i = 0; i < assnSubs.size(); i++) {
+            if (assnSubs[i]->getStudent()->getEnrollment() == currentStudent->getEnrollment()) {
+                existing = assnSubs[i];
+                break;
+            }
+        }
+        if (existing) {
+            existing->addFile(filename);
+            existing->setLate(isLate);
+            cout << "Updated existing submission with a new file." << endl;
+        } else {
+            Submission* newSubmission = new Submission(currentStudent,selectedAssignment,isLate);
+            newSubmission->addFile(filename);
+            submissions.push_back(newSubmission);
+            selectedAssignment->addSubmission(newSubmission);
+            currentStudent->submitAssignment(newSubmission);
+            cout << "Created a new submission." << endl;
+        }
         AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
         return;
     }
-    else if (choice == "3") {
-        Vector<Submission*> mySubmissions = currentStudent->getSubmissions();   
-        if (mySubmissions.empty()) {
-            cout << "No submissions found!" << endl;
-        } else {
-        //     cout << "My Submissions: " << endl;
-        //     for (int i = 0; i < mySubmissions.size(); i++) {
-        //         cout << i + 1 << ". " << mySubmissions[i]->getFileName() << endl;
-        //     }
-        // }
-        AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
+    else if (choice == "5"){
         return;
     }
     else
