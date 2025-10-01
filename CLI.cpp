@@ -34,6 +34,10 @@ void ClubSelected(Student *currentStudent, Club *selectedClub);
 
 void viewNotifications(Admin *admin);
 
+void viewAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Assignment*> assignments);
+
+void viewSubmissionDetails(Club* selectedClub,Student* currentStudent,Vector<Submission*> submissions);
+
 int main()
 {
     // ==========================
@@ -130,35 +134,38 @@ int main()
     // ==========================
     // Assignments (optional examples)
     // ==========================
-    // Assignment *assign1 = new Assignment("CS101", "Intro to Programming", "2025-10-10", c1);
-    // Assignment *assign2 = new Assignment("ENG201", "Engineering Basics", "2025-10-15", c2);
-    // Assignment *assign3 = new Assignment("MATH301", "Calculus III", "2025-11-01", c3);
-    // Assignment *assign4 = new Assignment("PHY101", "Physics Lab", "2025-10-20", c4);
+    Assignment *assign1 = new Assignment("CS101 HW1", "Solve 5 dynamic programming problems", a1, "Iteration 1", c1);
+    Assignment *assign2 = new Assignment("ENG201 Lab", "Submit CAD design project", a2, "Iteration 2", c2);
+    Assignment *assign3 = new Assignment("MATH301 Quiz", "Integration practice problems", a3, "Iteration 1", c3);
+    Assignment *assign4 = new Assignment("PHY101 Report", "Write lab report on optics experiment", a4, "Iteration 3", c4);
 
-    // assignments.push_back(assign1);
-    // assignments.push_back(assign2);
-    // assignments.push_back(assign3);
-    // assignments.push_back(assign4);
+    assignments.push_back(assign1);
+    assignments.push_back(assign2);
+    assignments.push_back(assign3);
+    assignments.push_back(assign4);
 
-    // c1->addAssignment(assign1);
-    // c2->addAssignment(assign2);
-    // c3->addAssignment(assign3);
-    // c4->addAssignment(assign4);
+    c1->addAssignment(assign1);
+    c2->addAssignment(assign2);
+    c3->addAssignment(assign3);
+    c4->addAssignment(assign4);
 
-    // // ==========================
-    // // Example Submissions
-    // // ==========================
-    // Submission *sub1 = new Submission(s1, assign1, "Submission1 CS");
-    // Submission *sub2 = new Submission(s2, assign2, "Submission1 ENG");
-    // Submission *sub3 = new Submission(s3, assign3, "Submission1 MATH");
+    // ==========================
+    // Example Submissions
+    // ==========================
+    Submission *sub1 = new Submission(s5, assign1, false); // William -> CS HW1 (on time)
+    Submission *sub2 = new Submission(s6, assign2, true);  // Olivia -> ENG Lab (late)
+    Submission *sub3 = new Submission(s7, assign3, false); // James -> Math Quiz (on time)
+    Submission *sub4 = new Submission(s8, assign4, true);  // Sophia -> Physics Report (late)
 
-    // submissions.push_back(sub1);
-    // submissions.push_back(sub2);
-    // submissions.push_back(sub3);
+    submissions.push_back(sub1);
+    submissions.push_back(sub2);
+    submissions.push_back(sub3);
+    submissions.push_back(sub4);
 
-    // assign1->addSubmission(sub1);
-    // assign2->addSubmission(sub2);
-    // assign3->addSubmission(sub3);
+    assign1->addSubmission(sub1);
+    assign2->addSubmission(sub2);
+    assign3->addSubmission(sub3);
+    assign4->addSubmission(sub4);
 
     cout << "Starting Application..." << endl;
     Signup();
@@ -614,7 +621,7 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
     else
     {
         cout << "===== Admin Tools =====\n";
-        cout << "7.Leave Club\n";
+        cout << "10.Leave Club\n";
         cout << "the only admin power you have is to leave the club hahaha" << endl;
     }
     cout << "Enter choice: ";
@@ -674,16 +681,52 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
     }
     else if (choice == "3")
     {
-        selectedClub->listAssignments();
-        ClubSelected(currentStudent, selectedClub);
-        return;
+        Vector<Assignment*> assignments = selectedClub->getAssignments();
+        if(assignments.empty()){
+            cout << "No assignments in this club!" << endl;
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        for (int i = 0; i < assignments.size(); i++){
+            cout << i + 1 << ". " << assignments[i]->getTitle() << endl;
+        }
+        viewAssignmentDetails(selectedClub,currentStudent,assignments);
+        // ClubSelected(currentStudent, selectedClub);
+        // return;
     }
     else if (choice == "4")
     {
-        // work here is left
+        Vector<Assignment*> assignments = selectedClub->getAssignments();
+        Vector<Assignment*> myAssignments;
+        for (int i = 0; i < assignments.size(); i++){
+            for(int j=0;j<assignments[i]->getStudents().size();j++){
+                if(assignments[i]->getStudents()[j]->getEnrollment()==currentStudent->getEnrollment()){
+                    myAssignments.push_back(assignments[i]);
+                    cout << i + 1 << ". " << assignments[i]->getTitle() << endl;
+                }
+            }
+        }
+        if(myAssignments.empty()){
+            cout << "No assignments assigned to you in this club!" << endl;
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        viewAssignmentDetails(selectedClub,currentStudent,myAssignments);
+        // ClubSelected(currentStudent, selectedClub);
+        // return;
     }
     else if (choice == "5")
     {
+        Vector<Submission*> mySubmissions = currentStudent->getSubmissions();
+        for (int i = 0; i < mySubmissions.size(); i++){
+            cout << i + 1 << ". " << mySubmissions[i]->getAssignment()->getTitle() << endl;
+        }
+        if(mySubmissions.empty()){
+            cout << "No submissions made by you in this club!" << endl;
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        viewSubmissionDetails(selectedClub,currentStudent,mySubmissions);
     }
     else if (choice == "6")
     {
@@ -807,5 +850,48 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
 }
+
+
+void viewAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Assignment*> assignments){
+        cout << "Enter the assignment number to view details or 0 to return: ";
+        int assignChoice;
+        std::cin >> assignChoice;
+        if (assignChoice == 0){
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        else{
+             if (assignChoice < 1 || assignChoice > assignments.size()){
+                cout << "Invalid choice!" << endl;
+                ClubSelected(currentStudent, selectedClub);
+                return;
+            }
+            Assignment* selectedAssignment = assignments[assignChoice - 1];
+            selectedAssignment->details();
+        }
+        viewAssignmentDetails(selectedClub,currentStudent,assignments);
+        return;
+    }
+
+void viewSubmissionDetails(Club* selectedClub,Student* currentStudent,Vector<Submission*> submissions){
+        cout << "Enter the submission number to view details or 0 to return: ";
+        int submitChoice;
+        std::cin >> submitChoice;
+        if (submitChoice == 0){
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        else{
+             if (submitChoice < 1 || submitChoice > submissions.size()){
+                cout << "Invalid choice!" << endl;
+                ClubSelected(currentStudent, selectedClub);
+                return;
+            }
+            Submission* selectedSubmission = submissions[submitChoice - 1];
+            selectedSubmission->display();
+        }
+        viewSubmissionDetails(selectedClub,currentStudent,submissions);
+        return;
+    }
 
 

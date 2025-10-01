@@ -51,6 +51,7 @@ public:
     string getMail() const;
     int getGraduationYear() const;
     float getCGPA() const;
+    Vector<Submission*> getSubmissions() const { return Assignment_Submission; }
     
     Vector<Club*> getClubRequest() const {
         if(clubRequest.empty()) return Vector<Club*>(); ;
