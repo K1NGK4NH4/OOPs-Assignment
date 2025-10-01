@@ -32,3 +32,6 @@ Then, run the executable file using the following command:
 
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
+
+## Compile Code
+g++ Assignment.cpp Submissions.cpp Club.cpp Student.cpp CLI.cpp -o mainprogram

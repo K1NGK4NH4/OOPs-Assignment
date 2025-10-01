@@ -38,6 +38,9 @@ void viewAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Ass
 
 void viewSubmissionDetails(Club* selectedClub,Student* currentStudent,Vector<Submission*> submissions);
 
+void MyAssignments(Student *currentStudent, Club *selectedClub);
+void AssignmentSelected(Student *currentStudent, Assignment *selectedAssignment, Club *selectedClub);
+
 int main()
 {
     // ==========================
@@ -149,6 +152,10 @@ int main()
     c3->addAssignment(assign3);
     c4->addAssignment(assign4);
 
+    assign1->addStudent(s5);
+    assign2->addStudent(s6);
+    assign3->addStudent(s7);
+    assign4->addStudent(s8);
     // ==========================
     // Example Submissions
     // ==========================
@@ -166,6 +173,28 @@ int main()
     assign2->addSubmission(sub2);
     assign3->addSubmission(sub3);
     assign4->addSubmission(sub4);
+
+
+
+    Submission* s1sub = new Submission(s1, assign1, false);
+    s1sub->addFile("01-10-25_iter1_alice.cpp");
+    submissions.push_back(s1sub);
+    assign1->addSubmission(s1sub);
+    s1->submitAssignment(s1sub);
+
+    
+    Submission* s2sub = new Submission(s2, assign1, true);
+    s2sub->addFile("01-10-25_iter1_bob.cpp");
+    submissions.push_back(s2sub);
+    assign1->addSubmission(s2sub);
+    s2sub->addFile("01-10-25_iter1_bob.cpp");
+    submissions.push_back(s2sub);
+    assign1->addSubmission(s2sub);
+    s2->submitAssignment(s2sub);
+
+    
+    s1sub->addFile("01-10-25_iter2_alice.cpp");
+    s1sub->setLate(true); // mark late now
 
     cout << "Starting Application..." << endl;
     Signup();
@@ -207,6 +236,8 @@ void Signup()
             }
             if (!loggedIn) {
                 cout << "Login Failed! Try again." << endl;
+                Signup();
+                return;
             }
         return;
     }
@@ -712,6 +743,8 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
             return;
         }
         viewSubmissionDetails(selectedClub,currentStudent,mySubmissions);
+        ClubSelected(currentStudent, selectedClub);
+        return;
     }
     else if (choice == "6")
     {
@@ -899,6 +932,7 @@ void MyAssignments(Student *currentStudent, Club *selectedClub)
         cout << "No club selected!" << endl;
         return;
     }
+    Vector<Assignment*> assignments = selectedClub->getAssignments();
     Vector<Assignment *> myAssignments;
     for (int i = 0; i < assignments.size(); i++){
         Vector<Student*> assignedStudents = assignments[i]->getStudents();
@@ -971,16 +1005,18 @@ void AssignmentSelected(Student* currentStudent, Assignment* selectedAssignment,
         AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
         return;
     }
-    else if (choice == "3") {
+    else if (choice == "3"){
         Vector<Submission*> mySubmissions = currentStudent->getSubmissions();
         Vector<Submission*> filteredSubmissions;
         for(int i = 0; i < mySubmissions.size(); i++){
-            if(mySubmissions[i]->getAssignment()->getTitle() != selectedAssignment->getTitle()){
+            if(mySubmissions[i]->getAssignment()->getTitle() == selectedAssignment->getTitle()){
                 filteredSubmissions.push_back(mySubmissions[i]);
             }
         }
         if (filteredSubmissions.empty()) {
             cout << "No submissions found!" << endl;
+            AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
+            return;
         } else {
             cout << "My Submissions: " << endl;
             for (int i = 0; i < filteredSubmissions.size(); i++) {
@@ -1012,7 +1048,19 @@ void AssignmentSelected(Student* currentStudent, Assignment* selectedAssignment,
         if (existing) {
             existing->addFile(filename);
             existing->setLate(isLate);
+            cout << existing->getAssignment()->getTitle() << endl;
             cout << "Updated existing submission with a new file." << endl;
+            // Ensure the student's submission list contains this submission
+            {
+                Vector<Submission*> mine = currentStudent->getSubmissions();
+                bool foundInStudent = false;
+                for (int i = 0; i < mine.size(); i++) {
+                    if (mine[i] == existing) { foundInStudent = true; break; }
+                }
+                if (!foundInStudent) {
+                    currentStudent->submitAssignment(existing);
+                }
+            }
         } else {
             Submission* newSubmission = new Submission(currentStudent,selectedAssignment,isLate);
             newSubmission->addFile(filename);
