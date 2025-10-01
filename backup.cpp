@@ -253,3 +253,45 @@
 //     admins.push_back(a2);
 //     // Test: Student s2 requests to join Club c1
 //     s2->addClubRequest(c1);
+
+
+// Submission* existing = nullptr;
+//         Vector<Submission*> assnSubs = selectedAssignment->getSubmissions();
+//         for (int i = 0; i < assnSubs.size(); i++) {
+//             if (assnSubs[i]->getStudent()->getEnrollment() == currentStudent->getEnrollment()) {
+//                 existing = assnSubs[i];
+//                 break;
+//             }
+//         }
+//         if (existing) {
+//             existing->addFile(filename);
+//             existing->setLate(isLate);
+//             cout << "Updated existing submission with a new file." << endl;
+//         } else {
+//             Submission* newSubmission = new Submission(currentStudent,selectedAssignment,isLate);
+//             newSubmission->addFile(filename);
+//             submissions.push_back(newSubmission);
+//             selectedAssignment->addSubmission(newSubmission);
+//             currentStudent->submitAssignment(newSubmission);
+//             cout << "Created a new submission." << endl;
+//         }
+
+
+//  Vector<Submission*> mySubmissions = currentStudent->getSubmissions();
+//         Vector<Submission*> filteredSubmissions;
+//         for(int i = 0; i < mySubmissions.size(); i++){
+//             if(mySubmissions[i]->getAssignment()->getTitle() != selectedAssignment->getTitle()){
+//                 filteredSubmissions.push_back(mySubmissions[i]);
+//             }
+//         }
+//         if (filteredSubmissions.empty()) {
+//             cout << "No submissions found!" << endl;
+//         } else {
+//             cout << "My Submissions: " << endl;
+//             for (int i = 0; i < filteredSubmissions.size(); i++) {
+//                 cout << i + 1 << ". " << filteredSubmissions[i]->getAssignment()->getTitle() << endl;
+//             }
+//         }
+//         viewSubmissionDetails(selectedClub,currentStudent,filteredSubmissions);
+//         AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
+//         return;
