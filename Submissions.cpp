@@ -14,7 +14,6 @@ Assignment* Submission::getAssignment() const {
     return assignment;
 }
 
-
 Vector<string> Submission::getSubmittedFiles() const {
     return submittedFiles;
 }
@@ -37,6 +36,12 @@ void Submission::setScore(double s) {
 }
 
 void Submission::addFile(const string& file) {
+    if (file.empty()) return;
+    for (int i = 0; i < submittedFiles.size(); ++i) {
+        if (submittedFiles[i] == file) {
+            return; // Avoid duplicate files
+        }
+    }
     submittedFiles.push_back(file);
 }
 

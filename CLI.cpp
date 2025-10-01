@@ -696,24 +696,9 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
     }
     else if (choice == "4")
     {
-        Vector<Assignment*> assignments = selectedClub->getAssignments();
-        Vector<Assignment*> myAssignments;
-        for (int i = 0; i < assignments.size(); i++){
-            for(int j=0;j<assignments[i]->getStudents().size();j++){
-                if(assignments[i]->getStudents()[j]->getEnrollment()==currentStudent->getEnrollment()){
-                    myAssignments.push_back(assignments[i]);
-                    cout << i + 1 << ". " << assignments[i]->getTitle() << endl;
-                }
-            }
-        }
-        if(myAssignments.empty()){
-            cout << "No assignments assigned to you in this club!" << endl;
-            ClubSelected(currentStudent, selectedClub);
-            return;
-        }
-        viewAssignmentDetails(selectedClub,currentStudent,myAssignments);
-        // ClubSelected(currentStudent, selectedClub);
-        // return;
+        MyAssignments(currentStudent, selectedClub);
+        ClubSelected(currentStudent, selectedClub);
+        return;
     }
     else if (choice == "5")
     {
@@ -738,7 +723,6 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         ClubSelected(currentStudent, selectedClub);
         return;
     }
-
     else if (choice == "8a")
     {
         cout << "Enter Enrollment of student to add: ";
@@ -831,8 +815,8 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         }
         return;
     }
-    else if (choice == "9a")
-    {
+    else if (choice == "9a"){
+
     }
     else if (choice == "9b")
     {
@@ -893,5 +877,131 @@ void viewSubmissionDetails(Club* selectedClub,Student* currentStudent,Vector<Sub
         viewSubmissionDetails(selectedClub,currentStudent,submissions);
         return;
     }
+
+void MyAssignments(Student *currentStudent, Club *selectedClub)
+{
+    if (currentStudent == nullptr){
+        cout << "No student logged in!" << endl;
+        return;
+    }
+    if(selectedClub == nullptr){
+        cout << "No club selected!" << endl;
+        return;
+    }
+    Vector<Assignment *> myAssignments;
+    for (int i = 0; i < assignments.size(); i++){
+        Vector<Student*> assignedStudents = assignments[i]->getStudents();
+        for (int j = 0; j < assignedStudents.size(); j++){
+            if (assignedStudents[j]->getEnrollment() == currentStudent->getEnrollment()){
+                myAssignments.push_back(assignments[i]);
+                break;
+            }
+        }
+    }
+    if (myAssignments.empty())
+    {
+        cout << "No assignments assigned to you!" << endl;
+        return;
+    }
+    cout << "My Assignments: " << endl;
+    for (int i = 0; i < myAssignments.size(); i++)
+    {
+        cout << i + 1 << ". " << myAssignments[i]->getTitle() << endl;
+    }
+    cout << "Enter the assignment number to view details or 0 to return: ";
+    int choice;
+    std::cin >> choice;
+    if (choice == 0){ return;}
+    else{
+        if (choice < 1 || choice > myAssignments.size()){
+            cout << "Invalid choice!" << endl;
+            MyAssignments(currentStudent, selectedClub);
+            return;
+        }
+        Assignment* selectedAssignment = myAssignments[choice - 1];
+        AssignmentSelected(currentStudent, selectedAssignment, selectedClub);
+    }
+    return;
+}
+void AssignmentSelected(Student* currentStudent, Assignment* selectedAssignment, Club* selectedClub){
+    if (currentStudent == nullptr){
+        cout << "No student logged in!" << endl;
+        return;
+    }
+    if(selectedClub == nullptr){
+        cout << "No club selected!" << endl;
+        return;
+    }
+    if(selectedAssignment == nullptr){
+        cout << "No assignment selected!" << endl;
+        return;
+    }
+    string choice;
+    cout << "\n===== " << selectedAssignment->getTitle() << " =====\n";
+    cout << "1. View Details\n";
+    cout << "2. My Assignment Status\n";
+    cout << "3. All my Submissions\n";
+    cout << "4. Submit Assignment\n";
+    cout << "5. Back to My Assignments\n";
+
+    cout << "Enter choice: ";
+    std::cin >> choice;
+    std::cin.ignore();
+    if (choice == "1"){
+        selectedAssignment->details();
+        AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
+        return;
+
+    }
+    else if (choice == "2")
+    {
+        cout<<"Assignment Status: "<<(selectedAssignment->isCompleted() ? "Completed" : "Not Completed")<<endl;
+        AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
+        return;
+    }
+    else if (choice == "4")
+    {
+        cout<<"Enter submission details: "<<endl;
+        cout<<"Enter your submission file name like dd-mm-yy_iteration_filename"<<endl;
+        string filename;
+        std::cin >> filename;
+        cout<<"Mark as late submission? (y/n): ";
+        char lateChoice;
+        std::cin >> lateChoice;
+        bool isLate = (lateChoice == 'y' || lateChoice == 'Y');
+        Submission* newSubmission = new Submission(currentStudent,selectedAssignment,isLate);
+        newSubmission->addFile(filename);
+        newSubmission->isLate(isLate);
+        cout<<"Submitting Assignment..."<<endl;
+        AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
+        return;
+    }
+    else if (choice == "3") {
+        Vector<Submission*> mySubmissions = currentStudent->getSubmissions();   
+        if (mySubmissions.empty()) {
+            cout << "No submissions found!" << endl;
+        } else {
+        //     cout << "My Submissions: " << endl;
+        //     for (int i = 0; i < mySubmissions.size(); i++) {
+        //         cout << i + 1 << ". " << mySubmissions[i]->getFileName() << endl;
+        //     }
+        // }
+        AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
+        return;
+    }
+    else
+    {
+        cout << "Invalid choice! Please try again." << endl;
+        AssignmentSelected(currentStudent,selectedAssignment,selectedClub);
+        return;
+    }  
+    return; 
+}
+
+
+
+
+
+
 
 

@@ -37,6 +37,7 @@ public:
     void setScore(double s);
 
     void addFile(const string& file);
+    void setLate(bool l) { late = l; }
 
     // Display submission info
     void display() const;

@@ -74,6 +74,13 @@ Vector<Club*> Student::ViewClubs(bool display) const {
 
 // Submit assignment
 void Student::submitAssignment(Submission* s) {
+    if (s == nullptr) return;
+    for (int i = 0; i < Assignment_Submission.size(); ++i) {
+        if (Assignment_Submission[i] == s) {
+            return;
+        }
+    }
+    Assignment_Submission.push_back(s);
 }
 
 // Get assignment (just prints club name for now)
