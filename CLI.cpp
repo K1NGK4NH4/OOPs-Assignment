@@ -42,6 +42,10 @@ void MyAssignments(Student *currentStudent, Club *selectedClub);
 void AssignmentSelected(Student *currentStudent, Assignment *selectedAssignment, Club *selectedClub);
 
 void editAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Assignment*> assignments);
+void deleteAssignment(Club* selectedClub, Student* currentStudent, Vector<Assignment*> assignments);
+void viewSubmissionDetails(Club* selectedClub, Student* currentStudent, Vector<Assignment*> assignments);
+void reviewSubmission(Submission* selectedSubmission, Student* selectedStudent);
+
 int main()
 {
     // ==========================
@@ -886,11 +890,30 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
     else if (choice == "9c")
     {
         //delete assignment
+        Vector<Assignment*> assignments = selectedClub->getAssignments();
+        if(assignments.empty()){
+            cout << "No assignments in this club!" << endl;
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        deleteAssignment(selectedClub,currentStudent,assignments);
+        ClubSelected(currentStudent, selectedClub);
+        return;
     }
     
     else if (choice == "9d")
     {
         //view submissions
+        Vector<Assignment*> assignments = selectedClub->getAssignments();
+        // List all assignments in the club
+        if(assignments.empty()){
+            cout << "No assignments in this club!" << endl;
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        viewSubmissionDetails(selectedClub,currentStudent,assignments);
+        ClubSelected(currentStudent, selectedClub);
+        return;
     }
     else
     {
@@ -900,7 +923,142 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
     }
 }
 
+void deleteAssignment(Club* selectedClub, Student* currentStudent, Vector<Assignment*> assignments) {
+    // Display header with formatted output
+    cout << "\n" << string(50, '=') << endl;
+    cout << "         DELETE ASSIGNMENT" << endl;
+    cout << string(50, '=') << endl << endl;
+    
+    // Display all available assignments in a numbered list
+    cout << "Choose an assignment to delete:" << endl;
+    cout << string(50, '-') << endl;
+    for (int i = 0; i < assignments.size(); i++) {
+        cout << "  " << (i + 1) << ". " << assignments[i]->getTitle() << endl;
+    }
+    cout << string(50, '-') << endl;
+    cout << "Enter the assignment number to delete or 0 to return: ";
+    
+    // Get user's assignment choice
+    int assignChoice;
+    std::cin >> assignChoice;
+    
+    // Handle return to previous menu
+    if (assignChoice == 0) {
+        cout << "\nReturning to previous menu..." << endl;
+        return;
+    }
+    else {
+        // Validate assignment selection
+        if (assignChoice < 1 || assignChoice > assignments.size()) {
+            cout << "\n[ERROR] Invalid choice! Please select between 1 and " 
+                 << assignments.size() << "." << endl;
+            // Recursively call to retry
+            deleteAssignment(selectedClub, currentStudent, assignments);
+            return;
+        }
+        
+        // Remove the selected assignment from the club's list
+        selectedClub->removeAssignment(assignChoice - 1);
+        cout << "Assignment deleted successfully!" << endl;
+    }
+}
 
+
+void viewSubmissionDetails(Club* selectedClub, Student* currentStudent, Vector<Assignment*> assignments) {
+    // Display header with formatted output
+        for (int i = 0; i < assignments.size(); i++) {
+            cout << i + 1 << ". " << assignments[i]->getTitle() << endl;
+        }
+        cout << "Enter the assignment number to view student submissions or 0 to return: ";
+        int assignChoice;
+        std::cin >> assignChoice;
+        if (assignChoice == 0) {
+            return;
+        }
+        if (assignChoice < 1 || assignChoice > assignments.size()) {
+            cout << "Invalid choice!" << endl;
+            viewSubmissionDetails(selectedClub, currentStudent, assignments);
+            return;
+        }
+        Assignment* selectedAssignment = assignments[assignChoice - 1];
+        Vector<Student*> assignedStudents = selectedAssignment->getStudents();
+        if (assignedStudents.empty()) {
+            cout << "No students assigned to this assignment!" << endl;
+            viewSubmissionDetails(selectedClub, currentStudent, assignments);
+            return;
+        }
+        cout << "Students assigned to this assignment:" << endl;
+        for (int i = 0; i < assignedStudents.size(); i++) {
+            cout << i + 1 << ". " << assignedStudents[i]->getName() << " (Enrollment: " << assignedStudents[i]->getEnrollment() << ")" << endl;
+        }
+        cout << "Enter the student number to view their submissions or 0 to return: ";
+        int studentChoice;
+        std::cin >> studentChoice;
+        if (studentChoice == 0) {
+            return;
+        }
+        if (studentChoice < 1 || studentChoice > assignedStudents.size()) {
+            cout << "Invalid choice!" << endl;
+            viewSubmissionDetails(selectedClub, currentStudent, assignments);
+            return;
+        }
+        Student* selectedStudent = assignedStudents[studentChoice - 1];
+        Vector<Submission*> allSubs = selectedAssignment->getSubmissions();
+        Submission* studentSubs = nullptr;
+        for (int i = 0; i < allSubs.size(); i++) {
+            if (allSubs[i]->getStudent()->getEnrollment() == selectedStudent->getEnrollment()) {
+            studentSubs = allSubs[i];
+            }
+        }
+        if (studentSubs == nullptr) {
+            cout << "No submissions found for this student!" << endl;
+            viewSubmissionDetails(selectedClub, currentStudent, assignments);
+            return;
+        } 
+        studentSubs->display();
+        reviewSubmission(studentSubs, selectedStudent);
+        viewSubmissionDetails(selectedClub, currentStudent, assignments);
+        return;
+}
+
+void reviewSubmission(Submission* selectedSubmission, Student* selectedStudent) {
+        cout<<"Enter choices:\n0. Return\n1. Add Review Comments\n2. Add Score\nEnter your choice: ";
+        int choice;
+        std::cin >> choice;
+        if (choice == 1) {
+            cout << "\nEnter your review comments: ";
+            std::cin.ignore(); // Clear input buffer
+            string comments;
+            std::getline(std::cin, comments);
+            selectedSubmission->setReview(comments);
+            cout << "Review comments added successfully!" << endl;
+            reviewSubmission(selectedSubmission, selectedStudent);
+            return;
+        }
+        else if (choice == 2) {
+            cout << "\nEnter score (0-100): ";
+            int score;
+            std::cin >> score;
+            if(score < 0 || score > 100) {
+                cout << "Invalid score! Please enter a score between 0 and 100." << endl;
+                reviewSubmission(selectedSubmission, selectedStudent);
+                return;
+            }
+            selectedSubmission->setScore(score);
+            cout << "Score added successfully!" << endl;
+            reviewSubmission(selectedSubmission, selectedStudent);
+            return;
+        }
+        else if (choice == 0) {
+            cout << "Returning to previous menu..." << endl;
+            return;
+        }
+        else {
+            cout << "Invalid choice!" << endl;
+            reviewSubmission(selectedSubmission, selectedStudent);
+            return;
+        }   
+}
 
 // Function to edit assignment details for a selected club
 // Parameters:
