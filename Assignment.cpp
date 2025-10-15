@@ -73,13 +73,7 @@ int Assignment::getAssignmentId() const {
     return AssignmentId;
 }
 
-string Assignment::getTitle() const {
-    return title;
-}
 
-string Assignment::getDescription() const {
-    return description;
-}
 
 Club* Assignment::getIssueingClub() const {
     return issueingClub;
@@ -89,7 +83,9 @@ Admin* Assignment::getGivenBy() const {
     return Givenby;
 }
 
-
+string Assignment::getTitle() const { return title; }
+string Assignment::getDescription() const { return description; }
+string Assignment::getFinalDate() const { return finalDate; }
 
 Vector<Student*> Assignment::getStudents() const {
     return Students;
@@ -134,9 +130,6 @@ void Assignment::addSubmission(Submission* submission) {
     Assignment_Submission.push_back(submission);
 }
 
-void Assignment::setTitle(const string& t) { title = t; }
-void Assignment::setDescription(const string& d) { description = d; }
-void Assignment::setFinalDate(const string& date) { finalDate = date; }
 void Assignment::removeStudent(int studentId) {
     Vector<Student*> temp;
     bool found = false;

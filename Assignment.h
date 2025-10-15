@@ -54,10 +54,10 @@ public:
     void details() const;
 
     // Modifiers
-    void setFinalDate(const string& date) { finalDate = date; }
+    void setFinalDate(const string& date) {}
     void addStudent(Student* student);
-    void setTitle(const string& t) { title = t; }
-    void setDescription(const string& d) { description = d; }
+    void setTitle(const string& t) { }
+    void setDescription(const string& d) {}
     void addSubmission(Submission* submission);
     void removeStudent(int studentId);
 };

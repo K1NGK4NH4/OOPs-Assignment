@@ -627,7 +627,6 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
     string choice;
 
     cout << "\n===== " << selectedClub->getName() << selectedClub->getClubId() << " =====\n ===== " << selectedClub->getAdmin()->getStudent()->getName() << " =====\n";
-    cout << "\n===== " << selectedClub->getName() << " =====\n";
     cout << "1. View Members\n";
     cout << "2. View Admin\n";
     cout << "3. View Assignments\n";
@@ -640,7 +639,7 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         cout << "===== Admin Tools =====\n";
         cout << "7. View Notifications:\n";
         cout << "8. Manage Members\n";
-        cout << "   a) Add Member          (8b)\n";
+        cout << "   a) Add Member          (8a)\n";
         cout << "   b) Remove Member       (8b)\n";
         cout << "   c) Assign Admin        (8c)\n";
         cout << "   d) Leave Club           (8d)\n";
@@ -902,115 +901,191 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
 }
 
 
-void editAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Assignment*> assignments){
-        cout << "Choose an assignment to edit:" << endl;
-        for (int i = 0; i < assignments.size(); i++) {
-            cout << i + 1 << ". " << assignments[i]->getTitle() << endl;
-        }
-        cout << "Enter the assignment number to edit or 0 to return: ";
-        int assignChoice;
-        std::cin >> assignChoice;
-        if (assignChoice == 0){
-            return;
-        }
-        else{
-             if (assignChoice < 1 || assignChoice > assignments.size()){
-                cout << "Invalid choice!" << endl;
-                editAssignmentDetails(selectedClub,currentStudent,assignments);
-                return;
-            }
-            Assignment* selectedAssignment = assignments[assignChoice - 1];
-            string newTitle, newDescription;
-            cout << "Enter new title (or press enter to keep current): ";
-            std::cin.ignore();
-            std::getline(std::cin, newTitle);
-            if (!newTitle.empty()){
-                selectedAssignment->setTitle(newTitle);
-            }
-            cout << "Enter new description (or press enter to keep current): ";
-            std::getline(std::cin, newDescription);
-            if (!newDescription.empty()){
-                selectedAssignment->setDescription(newDescription);
-            }
-            cout << "Enter new final date (YYYY-MM-DD) (or press enter to keep current): ";
-            string newFinalDate;
-            std::cin >> newFinalDate;
-            if (!newFinalDate.empty()){
-                selectedAssignment->setFinalDate(newFinalDate);
-            }
-            cout<<"add students to assignment? (y/n): ";
-            char ch;
-            std::cin >> ch;
-            if(ch == 'y'){
-                cout << "Enter Enrollment Numbers of students to add separated by spaces  ";
-                Vector<int> enrollments;
-                int enroll;
-                while (std::cin >> enroll)
-                {
-                    enrollments.push_back(enroll);
-                    if(std::cin.peek() == '\n') break; // break on newline
-                }
-                std::cin.clear();
-                for (int i = 0; i < enrollments.size(); i++)
-                {
-                    bool found = false;
-                    for (int j = 0; j < students.size(); j++)
-                    {
-                        if (students[j]->getEnrollment() == enrollments[i])
-                        {
-                            selectedAssignment->addStudent(students[j]);
 
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
-                    {
-                        cout << "No student found with enrollment " << enrollments[i] << endl;
-                    }
-                }
-            }else if(ch == 'n'){
-                cout << "No students added." << endl;
-            }else{
-                cout << "Invalid choice! No students added." << endl;
-            }   
-            cout << "Remove students from assignment? (y/n): ";
-            std::cin >> ch;
-            if(ch == 'y'){
-                cout << "Enter Enrollment Numbers of students to remove separated by spaces  ";
-                Vector<int> enrollments;
-                int enroll;
-                while (std::cin >> enroll)
-                {
-                    enrollments.push_back(enroll);
-                    if(std::cin.peek() == '\n') break; // break on newline
-                }
-                std::cin.clear();
-                for (int i = 0; i < enrollments.size(); i++)
-                {
-                    selectedAssignment->removeStudent(enrollments[i]);
-                }
-            }
-            else if(ch == 'n'){
-                cout << "No students removed." << endl;
-            }
-            else{
-                cout << "Invalid choice! No students removed." << endl;
-            }
-            cout << "Assignment updated successfully!" << endl;
-            cout << "Assignment ID: " << selectedAssignment->getAssignmentId() << endl;
-            cout << "Title: " << selectedAssignment->getTitle() << endl;
-            cout << "Description: " << selectedAssignment->getDescription() << endl;
-            cout << "Final Date: " << selectedAssignment->getFinalDate() << endl;
-            cout << "Number of Students Assigned: " << selectedAssignment->getStudents().size() << endl;
-            cout << "Issuing Club ID: " << selectedAssignment->getIssueingClub()->getClubId() << endl;
-            
-        }
-        editAssignmentDetails(selectedClub,currentStudent,assignments);
+// Function to edit assignment details for a selected club
+// Parameters:
+//   - selectedClub: pointer to the club whose assignments are being edited
+//   - currentStudent: pointer to the student performing the edit
+//   - assignments: vector of assignment pointers to choose from
+void editAssignmentDetails(Club* selectedClub, Student* currentStudent, Vector<Assignment*> assignments) {
+    // Display header with formatted output
+    cout << "\n" << string(50, '=') << endl;
+    cout << "         EDIT ASSIGNMENT DETAILS" << endl;
+    cout << string(50, '=') << endl << endl;
+    
+    // Display all available assignments in a numbered list
+    cout << "Choose an assignment to edit:" << endl;
+    cout << string(50, '-') << endl;
+    for (int i = 0; i < assignments.size(); i++) {
+        cout << "  " << (i + 1) << ". " << assignments[i]->getTitle() << endl;
+    }
+    cout << string(50, '-') << endl;
+    cout << "Enter the assignment number to edit or 0 to return: ";
+    
+    // Get user's assignment choice
+    int assignChoice;
+    std::cin >> assignChoice;
+    
+    // Handle return to previous menu
+    if (assignChoice == 0) {
+        cout << "\nReturning to previous menu..." << endl;
         return;
     }
+    else {
+        // Validate assignment selection
+        if (assignChoice < 1 || assignChoice > assignments.size()) {
+            cout << "\n[ERROR] Invalid choice! Please select between 1 and " 
+                 << assignments.size() << "." << endl;
+            // Recursively call to retry
+            editAssignmentDetails(selectedClub, currentStudent, assignments);
+            return;
+        }
+        
+        // Get the selected assignment
+        Assignment* selectedAssignment = assignments[assignChoice - 1];
+        
+        // Display current assignment details
+        cout << "\n" << string(50, '=') << endl;
+        cout << "Current Assignment Details:" << endl;
+        cout << string(50, '-') << endl;
+        cout << "  Title: " << selectedAssignment->getTitle() << endl;
+        cout << "  Description: " << selectedAssignment->getDescription() << endl;
+        cout << "  Final Date: " << selectedAssignment->getFinalDate() << endl;
+        cout << string(50, '=') << endl << endl;
+        
+        // === UPDATE TITLE ===
+        string newTitle, newDescription;
+        cout << "Enter new title (or press enter to keep current): ";
+        std::cin.ignore(); // Clear input buffer
+        std::getline(std::cin, newTitle);
+        if (!newTitle.empty()) {
+            selectedAssignment->setTitle(newTitle);
+            cout << "  ✓ Title updated!" << endl;
+        } else {
+            cout << "  → Title unchanged." << endl;
+        }
+        
+        // === UPDATE DESCRIPTION ===
+        cout << "\nEnter new description (or press enter to keep current): ";
+        std::getline(std::cin, newDescription);
+        if (!newDescription.empty()) {
+            selectedAssignment->setDescription(newDescription);
+            cout << "  ✓ Description updated!" << endl;
+        } else {
+            cout << "  → Description unchanged." << endl;
+        }
+        
+        // === UPDATE FINAL DATE ===
+        cout << "\nEnter new final date (YYYY-MM-DD) (or press enter to keep current): ";
+        string newFinalDate;
+        std::cin >> newFinalDate;
+        if (!newFinalDate.empty()) {
+            selectedAssignment->setFinalDate(newFinalDate);
+            cout << "  ✓ Final date updated!" << endl;
+        } else {
+            cout << "  → Final date unchanged." << endl;
+        }
+        
+        // === ADD STUDENTS TO ASSIGNMENT ===
+        cout << "\n" << string(50, '-') << endl;
+        cout << "Add students to assignment? (y/n): ";
+        char ch;
+        std::cin >> ch;
+        
+        if (ch == 'y' || ch == 'Y') {
+            cout << "Enter Enrollment Numbers of students to add separated by spaces: ";
+            Vector<int> enrollments;
+            int enroll;
+            
+            // Read all enrollment numbers from input
+            while (std::cin >> enroll) {
+                enrollments.push_back(enroll);
+                if (std::cin.peek() == '\n') break; // Break on newline
+            }
+            std::cin.clear();
+            
+            // Process each enrollment number
+            int addedCount = 0;
+            for (int i = 0; i < enrollments.size(); i++) {
+                bool found = false;
+                
+                // Search for student with matching enrollment
+                for (int j = 0; j < students.size(); j++) {
+                    if (students[j]->getEnrollment() == enrollments[i]) {
+                        selectedAssignment->addStudent(students[j]);
+                        cout << "  ✓ Added student: " << enrollments[i] << endl;
+                        addedCount++;
+                        found = true;
+                        break;
+                    }
+                }
+                
+                // Warn if student not found
+                if (!found) {
+                    cout << "  ✗ No student found with enrollment " << enrollments[i] << endl;
+                }
+            }
+            cout << "Total students added: " << addedCount << endl;
+        } 
+        else if (ch == 'n' || ch == 'N') {
+            cout << "No students added." << endl;
+        } 
+        else {
+            cout << "Invalid choice! No students added." << endl;
+        }
+        
+        // === REMOVE STUDENTS FROM ASSIGNMENT ===
+        cout << "\n" << string(50, '-') << endl;
+        cout << "Remove students from assignment? (y/n): ";
+        std::cin >> ch;
+        
+        if (ch == 'y' || ch == 'Y') {
+            cout << "Enter Enrollment Numbers of students to remove separated by spaces: ";
+            Vector<int> enrollments;
+            int enroll;
+            
+            // Read all enrollment numbers from input
+            while (std::cin >> enroll) {
+                enrollments.push_back(enroll);
+                if (std::cin.peek() == '\n') break; // Break on newline
+            }
+            std::cin.clear();
+            
+            // Remove each student by enrollment
+            for (int i = 0; i < enrollments.size(); i++) {
+                selectedAssignment->removeStudent(enrollments[i]);
+                cout << "  ✓ Removed student: " << enrollments[i] << endl;
+            }
+            cout << "Total students removed: " << enrollments.size() << endl;
+        }
+        else if (ch == 'n' || ch == 'N') {
+            cout << "No students removed." << endl;
+        }
+        else {
+            cout << "Invalid choice! No students removed." << endl;
+        }
+        
+        // === DISPLAY UPDATED ASSIGNMENT DETAILS ===
+        cout << "\n" << string(50, '=') << endl;
+        cout << "Assignment updated successfully!" << endl;
+        cout << string(50, '=') << endl;
+        cout << "Assignment ID: " << selectedAssignment->getAssignmentId() << endl;
+        cout << "Title: " << selectedAssignment->getTitle() << endl;
+        cout << "Description: " << selectedAssignment->getDescription() << endl;
+        cout << "Final Date: " << selectedAssignment->getFinalDate() << endl;
+        cout << "Number of Students Assigned: " << selectedAssignment->getStudents().size() << endl;
+        cout << "Issuing Club ID: " << selectedAssignment->getIssueingClub()->getClubId() << endl;
+        cout << string(50, '=') << endl << endl;
+    }
+    
+    // Recursively call to allow editing another assignment
+    editAssignmentDetails(selectedClub, currentStudent, assignments);
+    return;
+}
 
-void viewAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Assignment*> assignments){
+
+
+    void viewAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Assignment*> assignments){
         cout << "Enter the assignment number to view details or 0 to return: ";
         int assignChoice;
         std::cin >> assignChoice;
