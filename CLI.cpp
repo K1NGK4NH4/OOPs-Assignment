@@ -41,6 +41,7 @@ void viewSubmissionDetails(Club* selectedClub,Student* currentStudent,Vector<Sub
 void MyAssignments(Student *currentStudent, Club *selectedClub);
 void AssignmentSelected(Student *currentStudent, Assignment *selectedAssignment, Club *selectedClub);
 
+void editAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Assignment*> assignments);
 int main()
 {
     // ==========================
@@ -137,10 +138,10 @@ int main()
     // ==========================
     // Assignments (optional examples)
     // ==========================
-    Assignment *assign1 = new Assignment("CS101 HW1", "Solve 5 dynamic programming problems", a1, "Iteration 1", c1);
-    Assignment *assign2 = new Assignment("ENG201 Lab", "Submit CAD design project", a2, "Iteration 2", c2);
-    Assignment *assign3 = new Assignment("MATH301 Quiz", "Integration practice problems", a3, "Iteration 1", c3);
-    Assignment *assign4 = new Assignment("PHY101 Report", "Write lab report on optics experiment", a4, "Iteration 3", c4);
+    Assignment *assign1 = new Assignment("CS101 HW1", "Solve 5 dynamic programming problems", a1,  c1);
+    Assignment *assign2 = new Assignment("ENG201 Lab", "Submit CAD design project", a2, c2);
+    Assignment *assign3 = new Assignment("MATH301 Quiz", "Integration practice problems", a3,  c3);
+    Assignment *assign4 = new Assignment("PHY101 Report", "Write lab report on optics experiment", a4, c4);
 
     assignments.push_back(assign1);
     assignments.push_back(assign2);
@@ -659,7 +660,7 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
     std::cin >> choice;
     std::cin.ignore();
     if (choice == "1")
-    {
+    {   //view memebrs
         selectedClub->getMembers();
         for (int i = 0; i < selectedClub->getMembers().size(); i++)
         {
@@ -692,7 +693,7 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
     else if (choice == "2")
-    {
+    {   //view admin
         Admin *admin = selectedClub->getAdmin();
         if (admin == nullptr)
         {
@@ -711,7 +712,7 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
     else if (choice == "3")
-    {
+    {   //view assignments
         Vector<Assignment*> assignments = selectedClub->getAssignments();
         if(assignments.empty()){
             cout << "No assignments in this club!" << endl;
@@ -726,38 +727,41 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
     else if (choice == "4")
-    {
+    {   //view my assignments
         MyAssignments(currentStudent, selectedClub);
         ClubSelected(currentStudent, selectedClub);
         return;
     }
     else if (choice == "5")
-    {
+    {   //view my submissions
         Vector<Submission*> mySubmissions = currentStudent->getSubmissions();
         for (int i = 0; i < mySubmissions.size(); i++){
-            cout << i + 1 << ". " << mySubmissions[i]->getAssignment()->getTitle() << endl;
+            if(mySubmissions[i]->getAssignment()->getIssueingClub()->getClubId() != selectedClub->getClubId()) continue;
+                cout << i + 1 << ". " << mySubmissions[i]->getAssignment()->getTitle() << endl;
+                mySubmissions[i]->display();
+
         }
         if(mySubmissions.empty()){
             cout << "No submissions made by you in this club!" << endl;
             ClubSelected(currentStudent, selectedClub);
             return;
         }
-        viewSubmissionDetails(selectedClub,currentStudent,mySubmissions);
+        // viewSubmissionDetails(selectedClub,currentStudent,mySubmissions);
         ClubSelected(currentStudent, selectedClub);
         return;
     }
     else if (choice == "6")
-    {
+    {   //back to main menu
         return;
     }
     else if (choice == "7")
-    {
+    {   //view notifications
         viewNotifications(selectedClub->getAdmin());
         ClubSelected(currentStudent, selectedClub);
         return;
     }
     else if (choice == "8a")
-    {
+    {   //add member
         cout << "Enter Enrollment of student to add: ";
         int enroll;
         std::cin >> enroll;
@@ -784,7 +788,7 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
     else if (choice == "8b")
-    {
+    {   //remove member
         cout << "Enter Enrollment of student to remove: ";
         int enroll;
         std::cin >> enroll;
@@ -794,7 +798,7 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
     else if (choice == "8c")
-    {
+    {   //assign new admin
         cout << "Enter Enrollment of student to assign as new Admin: ";
         int enroll;
         std::cin >> enroll;
@@ -828,7 +832,7 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
     else if (choice == "8d")
-    {
+    {   //leave club
         if (selectedClub->getAdmin()->getStudent()->getEnrollment() == currentStudent->getEnrollment())
         {
             cout << "Admin cannot leave the club. Please assign a new admin before leaving." << endl;
@@ -849,15 +853,19 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
     else if (choice == "9a"){
+        //create assignment
         string title, description, iteration;
         cout << "Enter Assignment Title: ";
         std::cin.ignore();
         std::getline(std::cin, title);
         cout << "Enter Assignment Description: ";
         std::getline(std::cin, description);
-        cout << "Enter Assignment Iteration: ";
-        std::getline(std::cin, iteration);
-        Assignment* newAssignment = new Assignment(title, description, selectedClub->getAdmin(), iteration, selectedClub);
+        // cout << "Enter Assignment Iteration: ";
+        // std::getline(std::cin, iteration);
+        string finalDate;
+        cout << "Enter Final Date (YYYY-MM-DD): ";
+        std::cin >> finalDate;
+        Assignment* newAssignment = new Assignment(title, description, selectedClub->getAdmin(), selectedClub, finalDate);
         assignments.push_back(newAssignment);
         selectedClub->addAssignment(newAssignment);
         cout << "Assignment created successfully!" << endl;
@@ -865,13 +873,25 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
         return;
     }
     else if (choice == "9b"){
-        
+        //edit assignment
+        Vector<Assignment*> assignments = selectedClub->getAssignments();
+        if(assignments.empty()){
+            cout << "No assignments in this club!" << endl;
+            ClubSelected(currentStudent, selectedClub);
+            return;
+        }
+        editAssignmentDetails(selectedClub,currentStudent,assignments);
+        ClubSelected(currentStudent, selectedClub);
+        return;
     }
     else if (choice == "9c")
     {
+        //delete assignment
     }
+    
     else if (choice == "9d")
     {
+        //view submissions
     }
     else
     {
@@ -881,6 +901,114 @@ void ClubSelected(Student *currentStudent, Club *selectedClub)
     }
 }
 
+
+void editAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Assignment*> assignments){
+        cout << "Choose an assignment to edit:" << endl;
+        for (int i = 0; i < assignments.size(); i++) {
+            cout << i + 1 << ". " << assignments[i]->getTitle() << endl;
+        }
+        cout << "Enter the assignment number to edit or 0 to return: ";
+        int assignChoice;
+        std::cin >> assignChoice;
+        if (assignChoice == 0){
+            return;
+        }
+        else{
+             if (assignChoice < 1 || assignChoice > assignments.size()){
+                cout << "Invalid choice!" << endl;
+                editAssignmentDetails(selectedClub,currentStudent,assignments);
+                return;
+            }
+            Assignment* selectedAssignment = assignments[assignChoice - 1];
+            string newTitle, newDescription;
+            cout << "Enter new title (or press enter to keep current): ";
+            std::cin.ignore();
+            std::getline(std::cin, newTitle);
+            if (!newTitle.empty()){
+                selectedAssignment->setTitle(newTitle);
+            }
+            cout << "Enter new description (or press enter to keep current): ";
+            std::getline(std::cin, newDescription);
+            if (!newDescription.empty()){
+                selectedAssignment->setDescription(newDescription);
+            }
+            cout << "Enter new final date (YYYY-MM-DD) (or press enter to keep current): ";
+            string newFinalDate;
+            std::cin >> newFinalDate;
+            if (!newFinalDate.empty()){
+                selectedAssignment->setFinalDate(newFinalDate);
+            }
+            cout<<"add students to assignment? (y/n): ";
+            char ch;
+            std::cin >> ch;
+            if(ch == 'y'){
+                cout << "Enter Enrollment Numbers of students to add separated by spaces  ";
+                Vector<int> enrollments;
+                int enroll;
+                while (std::cin >> enroll)
+                {
+                    enrollments.push_back(enroll);
+                    if(std::cin.peek() == '\n') break; // break on newline
+                }
+                std::cin.clear();
+                for (int i = 0; i < enrollments.size(); i++)
+                {
+                    bool found = false;
+                    for (int j = 0; j < students.size(); j++)
+                    {
+                        if (students[j]->getEnrollment() == enrollments[i])
+                        {
+                            selectedAssignment->addStudent(students[j]);
+
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        cout << "No student found with enrollment " << enrollments[i] << endl;
+                    }
+                }
+            }else if(ch == 'n'){
+                cout << "No students added." << endl;
+            }else{
+                cout << "Invalid choice! No students added." << endl;
+            }   
+            cout << "Remove students from assignment? (y/n): ";
+            std::cin >> ch;
+            if(ch == 'y'){
+                cout << "Enter Enrollment Numbers of students to remove separated by spaces  ";
+                Vector<int> enrollments;
+                int enroll;
+                while (std::cin >> enroll)
+                {
+                    enrollments.push_back(enroll);
+                    if(std::cin.peek() == '\n') break; // break on newline
+                }
+                std::cin.clear();
+                for (int i = 0; i < enrollments.size(); i++)
+                {
+                    selectedAssignment->removeStudent(enrollments[i]);
+                }
+            }
+            else if(ch == 'n'){
+                cout << "No students removed." << endl;
+            }
+            else{
+                cout << "Invalid choice! No students removed." << endl;
+            }
+            cout << "Assignment updated successfully!" << endl;
+            cout << "Assignment ID: " << selectedAssignment->getAssignmentId() << endl;
+            cout << "Title: " << selectedAssignment->getTitle() << endl;
+            cout << "Description: " << selectedAssignment->getDescription() << endl;
+            cout << "Final Date: " << selectedAssignment->getFinalDate() << endl;
+            cout << "Number of Students Assigned: " << selectedAssignment->getStudents().size() << endl;
+            cout << "Issuing Club ID: " << selectedAssignment->getIssueingClub()->getClubId() << endl;
+            
+        }
+        editAssignmentDetails(selectedClub,currentStudent,assignments);
+        return;
+    }
 
 void viewAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Assignment*> assignments){
         cout << "Enter the assignment number to view details or 0 to return: ";
@@ -902,25 +1030,25 @@ void viewAssignmentDetails(Club* selectedClub,Student* currentStudent,Vector<Ass
         return;
     }
 
-// void viewSubmissionDetails(Club* selectedClub,Student* currentStudent,Vector<Submission*> submissions){
-//         cout << "Enter the submission number to view details or 0 to return: ";
-//         int submitChoice;
-//         std::cin >> submitChoice;
-//         if (submitChoice == 0){
-//             return;
-//         }
-//         else{
-//              if (submitChoice < 1 || submitChoice > submissions.size()){
-//                 cout << "Invalid choice!" << endl;
-//                 viewSubmissionDetails(selectedClub,currentStudent,submissions);
-//                 return;
-//             }
-//             Submission* selectedSubmission = submissions[submitChoice - 1];
-//             selectedSubmission->display();
-//         }
-//         viewSubmissionDetails(selectedClub,currentStudent,submissions);
-//         return;
-//     }
+void viewSubmissionDetails(Club* selectedClub,Student* currentStudent,Vector<Submission*> submissions){
+        cout << "Enter the submission number to view details or 0 to return: ";
+        int submitChoice;
+        std::cin >> submitChoice;
+        if (submitChoice == 0){
+            return;
+        }
+        else{
+             if (submitChoice < 1 || submitChoice > submissions.size()){
+                cout << "Invalid choice!" << endl;
+                viewSubmissionDetails(selectedClub,currentStudent,submissions);
+                return;
+            }
+            Submission* selectedSubmission = submissions[submitChoice - 1];
+            selectedSubmission->display();
+        }
+        viewSubmissionDetails(selectedClub,currentStudent,submissions);
+        return;
+    }
 
 void MyAssignments(Student *currentStudent, Club *selectedClub)
 {

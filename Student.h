@@ -36,6 +36,7 @@ public:
     void removeClubRequest(Club* c);
     void AddClub(Club* c);
     bool leaveClub(Club* c);
+    void removeSubmission(Assignment* s);
     Vector<Club*> ViewClubs(bool display=true) const;
 
     void submitAssignment(Submission* s);
@@ -44,6 +45,7 @@ public:
     void setMail(const string& m) { mail = m; }
     void setGraduationYear(int year) { GraduationYear = year; }
     void setCGPA(float g) { cgpa = g; }
+    void addSubmission(Submission* s);
 
     // Getters
     string getName() const;
@@ -51,6 +53,7 @@ public:
     string getMail() const;
     int getGraduationYear() const;
     float getCGPA() const;
+
     Vector<Submission*> getSubmissions() const { return Assignment_Submission; }
     
     Vector<Club*> getClubRequest() const {

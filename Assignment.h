@@ -19,15 +19,15 @@ private:
     string title;
     string description;
     Admin* Givenby;               
-    Vector<string> Iterations; 
     Vector<Student*> Students;
     bool completed;
     Club* issueingClub;
+    string finalDate;
     Vector<Submission*> Assignment_Submission;
 
 public:
     // Constructor
-    Assignment(string t, string d, Admin* g, string i, Club* c);
+    Assignment(string t, string d, Admin* g, Club* c, string finalDate = "");
 
     // Copy constructor (shallow copy of submissions)
     Assignment(const Assignment& other);
@@ -43,10 +43,10 @@ public:
     bool markCompleted();
     int getAssignmentId() const;
     string getTitle() const;
+    string getFinalDate() const;
     string getDescription() const;
     Club* getIssueingClub() const;
     Admin* getGivenBy() const;
-    Vector<string> getIterations() const;
     Vector<Student*> getStudents() const;
     Vector<Submission*> getSubmissions() const;
 
@@ -54,9 +54,12 @@ public:
     void details() const;
 
     // Modifiers
-    void addIteration(const string& iteration);
+    void setFinalDate(const string& date) { finalDate = date; }
     void addStudent(Student* student);
+    void setTitle(const string& t) { title = t; }
+    void setDescription(const string& d) { description = d; }
     void addSubmission(Submission* submission);
+    void removeStudent(int studentId);
 };
 
 #endif

@@ -4,16 +4,17 @@
 #include "Submissions.h"
 
 // Constructor
-Assignment::Assignment(string t, string d, Admin* g, string i, Club* c)
+Assignment::Assignment(string t, string d, Admin* g, Club* c, string finalDate )
     : title(t),
       description(d),
       Givenby(g),
+
       issueingClub(c),
-      completed(false)
+      completed(false),
+    finalDate(finalDate)
 {
     static int nextId = 1;
     AssignmentId = nextId++;
-    Iterations.push_back(i);
 }
 
 // Copy constructor
@@ -22,10 +23,10 @@ Assignment::Assignment(const Assignment& other)
       title(other.title),
       description(other.description),
       Givenby(other.Givenby),
-      Iterations(other.Iterations),
       Students(other.Students),
       completed(other.completed),
       issueingClub(other.issueingClub)
+        ,finalDate(other.finalDate)
 {
     // Shallow copy of submission pointers
     for (int i = 0; i < other.Assignment_Submission.size(); ++i) {
@@ -40,11 +41,10 @@ Assignment& Assignment::operator=(const Assignment& other) {
         title = other.title;
         description = other.description;
         Givenby = other.Givenby;
-        Iterations = other.Iterations;
         Students = other.Students;
         completed = other.completed;
         issueingClub = other.issueingClub;
-
+        finalDate = other.finalDate;
         Assignment_Submission = Vector<Submission*>();
         for (int i = 0; i < other.Assignment_Submission.size(); ++i) {
             Assignment_Submission.push_back(other.Assignment_Submission[i]);
@@ -61,10 +61,13 @@ bool Assignment::isCompleted() const {
     return completed;
 }
 
+
+
 bool Assignment::markCompleted() {
     completed = true;
     return completed;
 }
+
 
 int Assignment::getAssignmentId() const {
     return AssignmentId;
@@ -86,9 +89,7 @@ Admin* Assignment::getGivenBy() const {
     return Givenby;
 }
 
-Vector<string> Assignment::getIterations() const {
-    return Iterations;
-}
+
 
 Vector<Student*> Assignment::getStudents() const {
     return Students;
@@ -111,26 +112,46 @@ void Assignment::details() const {
         cout << "N/A";
     cout << endl;
 
-    cout << "Iterations: ";
-    for (int i = 0; i < Iterations.size(); ++i) {
-        cout << Iterations[i] << " ";
-    }
     cout << endl;
-
+    cout << "Final Date: " << finalDate << endl;
+    cout << "Number of Students Assigned: " << Students.size() << endl;
     cout << "Completed: " << (completed ? "Yes" : "No") << endl;
     cout << "Issuing Club ID: " << issueingClub->getClubId() << endl;
 }
 
 // Modifiers
 
-void Assignment::addIteration(const string& iteration) {
-    Iterations.push_back(iteration);
-}
+
 
 void Assignment::addStudent(Student* student) {
     Students.push_back(student);
+    Submission* newSubmission = new Submission(student, this, false);
+    Assignment_Submission.push_back(newSubmission);
+    student->addSubmission(newSubmission);
 }
 
 void Assignment::addSubmission(Submission* submission) {
     Assignment_Submission.push_back(submission);
+}
+
+void Assignment::setTitle(const string& t) { title = t; }
+void Assignment::setDescription(const string& d) { description = d; }
+void Assignment::setFinalDate(const string& date) { finalDate = date; }
+void Assignment::removeStudent(int studentId) {
+    Vector<Student*> temp;
+    bool found = false;
+    Student* studentToRemove = nullptr;
+    for (int i = 0; i < Students.size(); ++i) {
+        if (Students[i]->getEnrollment() != studentId) {
+            temp.push_back(Students[i]);
+        } else {
+            studentToRemove = Students[i];
+            found = true;
+        }
+    }
+    studentToRemove->removeSubmission(this);
+    Students = temp;
+    if (!found) {
+        cout << "Student with ID " << studentId << " not found." << endl;
+    }
 }

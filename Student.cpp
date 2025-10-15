@@ -83,6 +83,20 @@ void Student::submitAssignment(Submission* s) {
     Assignment_Submission.push_back(s);
 }
 
+void Student::addSubmission(Submission* s) {
+    if (s == nullptr) return;
+    Assignment_Submission.push_back(s);
+}
+
+void Student::removeSubmission(Assignment* s) {
+    for (int i = 0; i < Assignment_Submission.size(); ++i) {
+        if (Assignment_Submission[i]->getAssignment() == s) {
+            Assignment_Submission.pop(Assignment_Submission[i]);
+            break;
+        }
+    }
+}
+
 // Get assignment (just prints club name for now)
 
 
@@ -122,6 +136,7 @@ void Admin::removeMember(int studentId) {
 // Add assignment
 void Admin::addAssignment( Assignment* a) {
     club->addAssignment(a);
+
 }
 
 // Remove assignment
